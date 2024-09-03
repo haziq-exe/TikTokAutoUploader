@@ -1,4 +1,7 @@
-# tiktokautouploader
+<div align="center">
+  <h1>tiktokautouploader</h1>
+</div>
+
 
 ### AUTOMATE TIKTOK UPLOADS. USE TRENDING SOUNDS 🔊, AUTOSOLVES CAPTCHAS 🧠, ADD WORKING HASHTAGS 💯 AND MORE
 
