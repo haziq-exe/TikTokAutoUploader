@@ -62,6 +62,8 @@ NOTE: it is recommended that you use a tiktok account that has at least a week o
 
 ## 📝 Quick-Start
 
+NOTE: IT IS HIGHLY RECOMMENDED YOU READ DOCUMENTATION BEFORE STARTING
+
 Here's how to upload a video to TikTok using `tiktokautouploader`:
 
 ```python
