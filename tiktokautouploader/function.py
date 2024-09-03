@@ -56,7 +56,6 @@ def download_image(image_url):
 def run_inference_on_image_tougher(image_path, object):
 
     found_proper = False
-
     model = inference.get_model("captcha-2-6ehbe/1")
     results = model.infer(image=image_path)
 

@@ -6,7 +6,7 @@ setup(
     name='tiktokautouploader',
     version='2.52',
     packages=['tiktokautouploader'],
-    description='Upload or schedule videos to tiktok with tiktok sounds and hashtags that work and bypass captchas',
+    description='Upload or schedule videos to tiktok with viral tiktok sounds and hashtags that work and bypass captchas',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     keywords=['tiktok', 'autoupload', 'tiktokautoupload', 'tiktoks'],
