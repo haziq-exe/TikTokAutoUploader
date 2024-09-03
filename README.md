@@ -45,7 +45,7 @@ playwright install
 ```
 
 ⚠️ You'll need to download your tiktok cookies into a .json file after logging into your account on chrome.
-NOTE: it is recommended that you use a tiktok account that has at least a week or two of cookies.
+NOTE: it is recommended that you use a tiktok account that has at least a week or two worth of cookie history.
 
 ❗ How to install your .json cookies file:
 
