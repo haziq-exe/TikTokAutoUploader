@@ -74,7 +74,7 @@ upload_tiktok(
 )
 ```
 
-For more details, please refer to the [README.md](README.md) or contact support if you encounter any issues.
+For more details, please feel free to contact me at haziqmk123@gmail.com or on LinkedIn (on my github profile)
 ```
 
 ### Key Sections:
