@@ -9,7 +9,7 @@ setup(
     description='Upload or schedule videos to tiktok with tiktok sounds and hashtags that work and bypass captchas',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    keywords=['tiktok', 'autoupload', 'tiktokautoupload'],
+    keywords=['tiktok', 'autoupload', 'tiktokautoupload', 'tiktoks'],
     author='HAZIQ KHALID',
     author_email='haziqmk123@gmail.com',
     url='https://github.com/haziq-exe/TikTokAutoUploader',

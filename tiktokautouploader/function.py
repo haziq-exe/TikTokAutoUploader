@@ -29,7 +29,6 @@ def get_object(question):
         object_embeddings.append(get_embedding(obj))
     
     question_embedding = get_embedding(question)
-
     similarities = []
 
     for obj in object_embeddings:
