@@ -75,7 +75,6 @@ upload_tiktok(
 ```
 
 For more details, please feel free to contact me at haziqmk123@gmail.com or on LinkedIn (on my github profile)
-```
 
 ### Key Sections:
 
