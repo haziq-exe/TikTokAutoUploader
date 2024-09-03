@@ -69,9 +69,9 @@ This document provides detailed information about the parameters and usage of th
 **While runtime does depend on how long TikTok takes to upload the video to their servers, here are approximations on how much runtime is added by each parameter**
 
 - **Captcha's:** 10 - 13 secs
-- **Adding Sound:** 3 - 5 secs
-- **Scheduling:** 2 - 5 secs
-- **Copyright Check:** 5 - 8 secs (Can be longer depending on file size)
+- **Adding Sound:** 3 - 4 secs
+- **Scheduling:** 2 - 4 secs
+- **Copyright Check:** 4 - 8 secs (Can be longer depending on file size)
 
 - **NOTE:** When running for the first time, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
 
