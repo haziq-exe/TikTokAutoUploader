@@ -53,10 +53,17 @@ This document provides detailed information about the parameters and usage of th
   - The function allows scheduling up to 10 days in advance.
   - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are within 10 days from the current date).
 
-### ⛔ Captcha Limitations
+## ⛔ Currently supported Captcha's:
 
--- Captcha currently works perfectly for Captcha's of type:
+- **Captcha solver currently works perfectly for Captcha's of type:**
+<p align="center">
+  <img src="READMEimage/CaptchaImage1.jpg" alt="" width="200"/>
+</p>
 
+- **(BETA) Captcha solver currently in beta for Captcha's of type:** further testing is required to know extent of accuracy but code will attempt to solve these captcha's
+<p align="center">
+  <img src="READMEimage/CaptchaImage2.jpg" alt="" width="200"/>
+</p>
 
 ## Example Usage
 
