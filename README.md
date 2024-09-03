@@ -115,12 +115,13 @@ This library requires the following dependencies:
 - `transformers`
 - `torch`
 - `scikit-learn`
+- `inference`
 
 These will be automatically installed when you install the package.
 
 ## 👤 Author
 
-Created by **Haziq Khalid**. Feel free to reach out at [haziqmk123@gmail.com](mailto:haziqmk123@gmail.com).
+Created by **Haziq Khalid**. Feel free to reach out at [haziqmk123@gmail.com](mailto:haziqmk123@gmail.com) or my LinkedIn.
 
 ## 📄 License
 
