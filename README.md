@@ -2,7 +2,7 @@
 
 **Easily automate your TikTok uploads with powerful features that save you time and effort.**
 
-[![PyPI version](https://badge.fury.io/py/autotiktokuploader.svg)](https://badge.fury.io/py/autotiktokuploader)  
+[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🚀 Features
