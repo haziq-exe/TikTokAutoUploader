@@ -53,6 +53,11 @@ This document provides detailed information about the parameters and usage of th
   - The function allows scheduling up to 10 days in advance.
   - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are within 10 days from the current date).
 
+### ⛔ Captcha Limitations
+
+-- Captcha currently works perfectly for Captcha's of type:
+
+
 ## Example Usage
 
 Here’s a basic example of how to use the `upload_tiktok` function:
