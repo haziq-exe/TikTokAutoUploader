@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='tiktokautouploader',
-    version='2.5',
+    version='2.52',
     packages=['tiktokautouploader'],
     description='Upload or schedule videos to tiktok with tiktok sounds and hashtags that work and bypass captchas',
     long_description=open('README.md').read(),
