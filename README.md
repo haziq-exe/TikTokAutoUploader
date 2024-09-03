@@ -20,7 +20,6 @@
 - **🗓 Schedule Uploads:** Upload videos at specific times with our scheduling feature.
 - **🔍 Copyright Check:** Ensure your video is safe from copyright claims before uploading.
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
-- **🥸 Upload To Different Accounts:** Stay on top of all your channels by choosing which account to upload to.
 
 
 
@@ -46,8 +45,7 @@ Run the following command AFTER installing the package:
 playwright install
 ```
 
-⚠️ You'll need to download your tiktok cookies into a .json file after logging into your account on chrome. The .json file will correspond to the account you upload with. So repeat this step with different account if you wish to upload to it.
-NOTE: it is recommended that you use a tiktok account that is at least a week old.
+⚠️ You'll need to download your tiktok cookies into a .json file after logging into your account on chrome.
 
 ❗ How to install your .json cookies file:
 
