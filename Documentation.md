@@ -53,7 +53,7 @@ This document provides detailed information about the parameters and usage of th
   - The function allows scheduling up to 10 days in advance.
   - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are within 10 days from the current date).
 
-## ⛔ Currently supported Captcha's:
+## ⛔ Supported Captcha's:
 
 - **Captcha solver currently works perfectly for Captcha's of type:**
 <p align="center">
@@ -64,6 +64,16 @@ This document provides detailed information about the parameters and usage of th
 <p align="center">
   <img src="READMEimage/CaptchaImage2.jpg" alt="" width="200"/>
 </p>
+
+## 🕰️ Runtime:
+**While runtime does depend on how long TikTok takes to upload the video to their servers, here are approximations on how much runtime is added by each parameter**
+
+- **Captcha's:** 10 - 13 secs
+- **Adding Sound:** 3 - 5 secs
+- **Scheduling:** 2 - 5 secs
+- **Copyright Check:** 5 - 8 secs (Can be longer depending on file size)
+
+- **NOTE:** When running for the first time, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
 
 ## Example Usage
 
@@ -91,5 +101,7 @@ For more details, please feel free to contact me at haziqmk123@gmail.com or on L
 ### Key Sections:
 
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
+- **Supported Captcha's**: Showcases the Captcha's the code is able to solve
+- **Runtime**: Provides an estimate of how much runtime by different parameters
 - **Other Notes**: Highlights recommendations and limitations related to TikTok accounts and scheduling.
 - **Example Usage**: Demonstrates a practical example of how to use the function.
