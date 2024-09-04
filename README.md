@@ -101,8 +101,6 @@ This library requires the following dependencies:
 - `playwright`
 - `requests`
 - `Pillow`
-- `transformers`
-- `torch`
 - `scikit-learn`
 - `inference`
 
