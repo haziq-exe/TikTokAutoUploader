@@ -3,7 +3,7 @@
 </div>
 
 
-### AUTOMATE TIKTOK UPLOADS. USE TRENDING SOUNDS 🔊, AUTOSOLVES CAPTCHAS 🧠, ADD WORKING HASHTAGS 💯 AND MORE
+### AUTOMATE TIKTOK UPLOADS. USE TRENDING SOUNDS 🔊, AUTOSOLVES CAPTCHAS 🧠, ADD WORKING HASHTAGS 💯, SCHEDULE UPLOADS 🗓️ AND MORE 🎁
 
 [![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -17,7 +17,7 @@
 
 - **🔐 Bypass/Auto Solve Captchas:** No more manual captcha solving; fully automated process!
 - **🎵 Use TikTok Sounds:** Seamlessly add popular TikTok sounds to your videos.
-- **🗓 Schedule Uploads:** Upload videos at specific times with our scheduling feature.
+- **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
 - **🔍 Copyright Check:** Ensure your video is safe from copyright claims before uploading.
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
 
