@@ -9,34 +9,27 @@ from PIL import Image
 import sys
 import os
 import warnings
-from transformers import AutoModel, AutoTokenizer
-import torch
-from sklearn.metrics.pairwise import cosine_similarity
+warnings.filterwarnings("ignore")
 
 def no_draft_warning():
-    warnings.warn("SAVE AS DRAFT BUTTON NOT FOUND; CODE WILL CONTINUE RUNNING BUT VIDEO IS UNLIKELY TO UPLOAD; BEING ABLE TO SAVE AS DRAFT IS ESSENTIAL TO BEING ABLE TO EDIT VIDEOS AND POST, PLEASE BUILD UP ENOUGH ACCOUNT HISTORY TO BE ABLE TO SAVE DRAFTS ", UserWarning)
+    print("SAVE AS DRAFT BUTTON NOT FOUND; CODE WILL CONTINUE RUNNING BUT VIDEO IS UNLIKELY TO UPLOAD; BEING ABLE TO SAVE AS DRAFT IS ESSENTIAL TO BEING ABLE TO EDIT VIDEOS AND POST, PLEASE BUILD UP ENOUGH ACCOUNT HISTORY TO BE ABLE TO SAVE DRAFTS ")
 
 def login_warning():
-    warnings.warn("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED", UserWarning)
+    print("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED")
 
 def save_cookies(cookies):
     with open('TK_cookies.json', 'w') as file:
         json.dump(cookies, file, indent=4)
 
-
-def set_playwright_path():
-    playwright_path = os.path.expanduser('~/.playwright')
-    os.environ['PLAYWRIGHT_BROWSERS_PATH'] = playwright_path
-
 def run_javascript():
-    js_file_path = pkg_resources.resource_filename(__name__, 'assets/login.js')
+    js_file_path = pkg_resources.resource_filename(__name__, 'Js_assets/login.js')
     result = subprocess.run(['node', js_file_path], capture_output=True, text=True)
     print("STDOUT:", result.stdout)
     print("STDERR:", result.stderr)
     return result.stdout, result.stderr
 
 def install_js_dependencies():
-    js_dir = pkg_resources.resource_filename(__name__, 'assets')
+    js_dir = pkg_resources.resource_filename(__name__, 'Js_assets')
     node_modules_path = os.path.join(js_dir, 'node_modules')
     
     if not os.path.exists(node_modules_path):
@@ -93,7 +86,6 @@ def understood_Qs(question):
     for key in understood_terms.keys():
         if key in question:
             item = understood_terms.get(key)
-            print(item)
             return item
         
     return 'N.A'
@@ -364,7 +356,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
         page.wait_for_selector('div[data-contents="true"]')
         page.click('div[data-contents="true"]')
         if suppressprint == False:
-            print("done inputting File, waiting for tiktok to load onto their server")
+            print("done inputting File, waiting for tiktok to load onto their server, this may take a couple of minutes, depending on your video length")
         time.sleep(0.5)
         if description == None:
             sys.exit("ERROR: PLEASE INCLUDE A DESCRIPTION")
@@ -406,9 +398,9 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
             print("Description and Hashtags added")
 
         try:
-            page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=600000)  
+            page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=12000000)  
         except:
-            sys.exit("ERROR: TIK TOK TOOK TOO LONG TO UPLOAD YOUR FILE (>10min). Try again, if issue persists then try a lower file size or different wifi connection")
+            sys.exit("ERROR: TIK TOK TOOK TOO LONG TO UPLOAD YOUR FILE (>20min). Try again, if issue persists then try a lower file size or different wifi connection")
 
         time.sleep(0.5)
         if suppressprint == False:
@@ -535,33 +527,35 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                 uploaded = False
                 checks = 0
                 while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt").is_visible()').is_visible():
+                    if page.locator(':has-text("Leaving the page does not interrupt")').is_visible():
+                        print("I see it")
+                        time.sleep(1)
                         break
                     time.sleep(0.2)
                     checks += 1
-                    if checks == 100:
+                    if checks > 100:
                         time.sleep(10)
-                    if checks == 11:
+                    if checks == 150:
                         break
             else:
                 page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
                 uploaded = False
                 checks = 0
                 while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt").is_visible()'):
+                    if page.locator(':has-text("Leaving the page does not interrupt")').is_visible():
+                        time.sleep(1)
                         break
                     time.sleep(0.2)
                     checks += 1
-                    if checks == 100:
+                    if checks > 100:
                         time.sleep(10)
-                    if checks == 11:
+                    if checks == 150:
                         break
             if suppressprint == False:
                 print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
         except:
-            sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD, MAKE SURE SCHEDULE TIME IS AT LEAST 15 MIN INTO THE FUTURE FROM YOUR CURRENT LOCAL TIME")
+            time.sleep(7)
+            sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
         time.sleep(1)
 
         page.close()
-
-upload_tiktok(video='fakevid.mp4', description='blahblah')
