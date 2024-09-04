@@ -2,6 +2,15 @@
 
 This document provides detailed information about the parameters and usage of the `upload_tiktok` function in the **AutoTikTokUploader** library. The function is designed to automate the process of uploading or scheduling videos to TikTok with additional features such as adding TikTok sounds, hashtags, and conducting copyright checks.
 
+### ❗ Key Sections:
+
+- **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
+- **Initialization Info**: Details instances that occur during first run of function
+- **Important Notes**: Highlights important account recommendations and limitations related to TikTok accounts and scheduling.
+- **Supported Captchas**: Showcases the Captcha's the code is able to solve
+- **Runtime**: Provides an estimate of how much runtime is added by different parameters
+- **Example Usage**: Demonstrates a practical example of how to use the function.
+
 ## 📜 Function: `upload_tiktok`
 
 ### Parameters
@@ -10,13 +19,10 @@ This document provides detailed information about the parameters and usage of th
   - The input path for your video file that you want to upload to TikTok.
   
 - **`description`** (str)
-  - The description text that will accompany the video when uploaded.
+  - The description text that will accompany the video when uploaded. hashtags included in description will NOT work, must be included in `hashtags` parameter
 
-- **`hashtags`** (list of str)
+- **`hashtags`** (list of str, optional, default: None)
   - An array of hashtag strings (e.g., `['#example', '#fun']`) to be added to the video description.
-
-- **`cookies_path`** (str)
-  - The file path to your `cookies.json` file, which is used for authenticating your TikTok account.
 
 - **`sound_name`** (str, optional, default: None)
   - The name of the TikTok sound that you want to use for the video. This sound will be applied during the upload. Defaults to None
@@ -30,8 +36,9 @@ This document provides detailed information about the parameters and usage of th
 - **`schedule`** (str, optional, default: None)
   - The time you want the video to be uploaded. The format should be `HH:MM`, and the minute (`MM`) must be a multiple of 5. The scheduled time must be at least 15 minutes later than the current local time (unless scheduling for a different day). The time should be in your local time zone.
 
-- **`day`** (int, optional, default: None)
+- **`day`** (int, optional, default: None) (requires time in `schedule` also)
   - If you want to schedule the video for a different day, this parameter specifies the day of the current month on which to upload the video. i.e: If current day is Sept 3rd, day=5 will upload video on Sept 5th
+  - NOTE: You will also need to specify time of upload in `schedule` parameter or else `day` won't work
 
     **Important**:
     - You can only schedule a maximum of 10 days in advance.
@@ -44,36 +51,55 @@ This document provides detailed information about the parameters and usage of th
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
 ### 📝 IMPORTANT Notes
+- **`suppressprint`** (bool, optional, default: `False`)
+  - When `True`, uppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
+
+
+### 🛠️ Initialization Info
+
+- **During FIRST RUN:** 
+
+  - You will be asked to log-in to TikTok, your cookies from your log-in will then be stored in a file `TK_cookes.json`. If you wish to change the account you want to post to, just delete the cookies file and you will be prompted to log in again.
+
+  - Javascript dependencies will be automatically downloaded, once downloaded it will not attempt to download it again unless the files get deleted.
+  
+  - Runtime might be a 20-30 seconds longer than usual, this is due to libraries being built and runtime should return to normal after first run
+
+
+### 📝 Important Notes
 
 - **TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of cookies built up for the best results.
   - Your TikTok account MUST have the ability to save drafts; otherwise, the code will not work correctly. If your account does not have the ability to save drafts, you will be prompted with a warning message during execution
+- **VERY IMPORTANT: TikTok Account Recommendations**:
+  - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
+  - Your TikTok account MUST have the ability to save drafts; otherwise, the code may not work correctly.
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 10 days in advance.
   - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are within 10 days from the current date).
 
-## ⛔ Supported Captcha's:
+## ⛔ Supported Captchas:
 
 - **Captcha solver currently works perfectly for Captcha's of type:**
 <p align="center">
   <img src="READMEimage/CaptchaImage1.jpg" alt="" width="200"/>
 </p>
 
-- **(BETA) Captcha solver currently in beta for Captcha's of type:** further testing is required to know extent of accuracy but code will attempt to solve these captcha's
 <p align="center">
   <img src="READMEimage/CaptchaImage2.jpg" alt="" width="200"/>
 </p>
 
 ## 🕰️ Runtime:
-**While runtime does depend on how long TikTok takes to upload the video to their servers, here are approximations on how much runtime is added by each parameter**
+**Total runtime depends on how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha's:** 10 - 13 secs
+- **Captcha's:** 3 - 10 secs
 - **Adding Sound:** 3 - 4 secs
-- **Scheduling:** 2 - 4 secs
-- **Copyright Check:** 4 - 8 secs (Can be longer depending on file size)
+- **Scheduling:** 1 - 3 secs
+- **Copyright Check:** 4 - 10 secs (In rare cases it is longer due to large file size)
 
-- **NOTE:** When running for the first time, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
+- **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
+
 
 ## Example Usage
 
@@ -86,7 +112,6 @@ upload_tiktok(
     video='path/to/your/video.mp4',
     description='Check out my latest video!',
     hashtags=['#fun', '#viral'],
-    cookies_path='path/to/cookies.json',
     sound_name='popular_sound',
     sound_aud_vol='mix',
     schedule='15:00',
@@ -101,7 +126,5 @@ For more details, please feel free to contact me at haziqmk123@gmail.com or on L
 ### Key Sections:
 
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
-- **Supported Captcha's**: Showcases the Captcha's the code is able to solve
-- **Runtime**: Provides an estimate of how much runtime is added by different parameters
-- **IMPORTANT Notes**: Highlights important recommendations and limitations related to TikTok accounts and scheduling.
+- **Other Notes**: Highlights recommendations and limitations related to TikTok accounts and scheduling.
 - **Example Usage**: Demonstrates a practical example of how to use the function.

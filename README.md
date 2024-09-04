@@ -24,19 +24,22 @@
 
 ## 📦 Installation
 
-Install the package using `pip`:
+1. **Python Installation:** Install the package using `pip`:
 
 ```bash
 pip install tiktokautouploader
 ```
 
+---
 
 
 ## ⚙️ Pre-requisites
 
-Before you can use this library you'll NEED to do the following two steps:
+1. **Node.js:** You must have Node.js installed on your system, as some parts of this package rely on JavaScript code. If you don't have Node.js installed, you can download it from [nodejs.org](https://nodejs.org/).
 
-⚠️ You'll need to install the necessary browser binaries for `playwright`.
+   - **Note:** The necessary JavaScript dependencies (`playwright`,`playwright-extra`, `puppeteer-extra-plugin-stealth`) will be automatically installed the first time you run the function, so you don't need to install them manually. Make sure that `npm` (Node.js package manager) is available in your system's PATH.
+
+2. **Browser Binaries:** You'll need to install the necessary browser binaries for `playwright`.
 
 Run the following command AFTER installing the package:
 
@@ -44,27 +47,11 @@ Run the following command AFTER installing the package:
 playwright install
 ```
 
-⚠️ You'll need to download your tiktok cookies into a .json file after logging into your account on chrome.
-NOTE: it is recommended that you use a tiktok account that has at least a week or two worth of cookie history.
-
-❗ How to install your .json cookies file:
-
-• Download the following chrome extension: https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm?hl=en&pli=1
-
-• Open tiktok.com and log-in
-
-• Once logged in, click on your cookie-editor and click 'Export'. Then export as 'JSON'
-
-• Create a .json file and paste the JSON cookies that you copied with the extension
-
-• Finally, include the path to your cookies file in your function!
-
-
 ## 📝 Quick-Start
 
-NOTE: IT IS HIGHLY RECOMMENDED YOU READ DOCUMENTATION BEFORE STARTING
+Here's how to upload a video to TikTok with hashtags using `tiktokautouploader`:
 
-Here's how to upload a video to TikTok using `tiktokautouploader`:
+NOTE: it is recommended that you use a tiktok account that has at least a week or two of cookies.
 
 ```python
 from tiktokautouploader import upload_tiktok
@@ -72,16 +59,15 @@ from tiktokautouploader import upload_tiktok
 video_path = 'path/to/your/video.mp4'
 description = 'Check out my latest TikTok video!'
 hashtags = ['#fun', '#viral']
-cookies_path = 'path/to/your/cookies.json'
 
-upload_tiktok(video=video_path, description=description, hashtags=hashtags, cookies_path=cookies_path)
+upload_tiktok(video=video_path, description=description, hashtags=hashtags)
 
 ```
 
 ### Upload with TikTok Sound
 
 ```python
-upload_tiktok(video=video_path, description=description, hashtags=hashtags, cookies_path=cookies_path, sound_name='trending_sound')
+upload_tiktok(video=video_path, description=description, sound_name='trending_sound')
 ```
 
 PLEASE READ DOCUMENTATION FOR MORE INFO.
@@ -89,7 +75,7 @@ PLEASE READ DOCUMENTATION FOR MORE INFO.
 ### Schedule an Upload
 
 ```python
-upload_tiktok(video=video_path, description=description, hashtags=hashtags, cookies_path=cookies_path, schedule='03:10', day=11)
+upload_tiktok(video=video_path, description=description, schedule='03:10', day=11)
 ```
 
 PLEASE READ DOCUMENTATION FOR MORE INFO
@@ -97,7 +83,7 @@ PLEASE READ DOCUMENTATION FOR MORE INFO
 ### Perform Copyright Check Before Uploading
 
 ```python
-upload_tiktok(video=video_path, description=description, hashtags=hashtags, cookies_path=cookies_path, copyrightcheck=True)
+upload_tiktok(video=video_path, description=description, hashtags=hashtags, copyrightcheck=True)
 ```
 
 ## 🎯 Why Choose `autotiktokuploader`?
