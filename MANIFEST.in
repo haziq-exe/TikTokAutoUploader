@@ -1,2 +1,3 @@
 include README.md LICENSE.md
 recursive-include TikTokAutoUploader *.py
+include autotiktokuploader/assets/login.js
