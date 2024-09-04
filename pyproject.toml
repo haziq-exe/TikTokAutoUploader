@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling", "setupwheel"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tiktokautouploader"
+version = "2.66"
+description = "Upload or schedule videos to TikTok with TikTok sounds and hashtags that work."
+long-description = "file: README.md"
+long-description-content-type = "text/markdown"
+keywords = ["tiktok", "autoupload", "tiktokautoupload"]
+authors = [
+    { name = "HAZIQ KHALID", email = "haziqmk123@gmail.com" }
+]
+urls = { "Homepage" = "https://github.com/haziq-exe/TikTokAutoUploader" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+python-requires = ">=3.6"
+
+dependencies = [
+    "playwright>=1.0.0",
+    "requests>=2.0.0",
+    "Pillow>=8.0.0",
+    "scikit-learn>=0.24.0",
+]
+
+[tool.hatch.build]
+tags = ["wheel"]
+
+[tool.hatch.metadata]
+name = "tiktokautouploader"
+version = "2.66"
+description = "Upload or schedule videos to TikTok with TikTok sounds and hashtags that work."
+long_description = "file: README.md"
+long_description_content_type = "text/markdown"
+keywords = ["tiktok", "autoupload", "tiktokautoupload"]
+authors = [
+    { name = "HAZIQ KHALID", email = "haziqmk123@gmail.com" }
+]
+urls = { "Homepage" = "https://github.com/haziq-exe/TikTokAutoUploader" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+python_requires = ">=3.6"
+
+[tool.hatch.envs]
+packages = ["autotiktokuploader"]
+include = ["autotiktokuploader/__init__.py", "autotiktokuploader/function.py", "autotiktokuploader/Js_assets/login.js"]
