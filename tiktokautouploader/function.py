@@ -199,7 +199,6 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
     video (str) -> path to video to upload
     description (str) -> description for video
     hashtags (str)(array) -> hashtags for video
-    cookies_path (str) -> path to tik tok cookies .json file
     sound_name (str) -> name of tik tok sound to use for video
     sound_aud_vol (str) -> volume of tik tok sound, 'main', 'mix' or 'background', check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
     schedule (str) -> format HH:MM, your local time to upload video
