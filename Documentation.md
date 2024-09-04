@@ -103,5 +103,5 @@ For more details, please feel free to contact me at haziqmk123@gmail.com or on L
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
 - **Supported Captcha's**: Showcases the Captcha's the code is able to solve
 - **Runtime**: Provides an estimate of how much runtime is added by different parameters
-- **IMP Notes**: Highlights important recommendations and limitations related to TikTok accounts and scheduling.
+- **IMPORTANT Notes**: Highlights important recommendations and limitations related to TikTok accounts and scheduling.
 - **Example Usage**: Demonstrates a practical example of how to use the function.
