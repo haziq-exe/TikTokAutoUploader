@@ -43,11 +43,11 @@ This document provides detailed information about the parameters and usage of th
 - **`suppressprint`** (bool, optional, default: `True`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
-### 📝 Other Notes
+### 📝 IMPORTANT Notes
 
 - **TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of cookies built up for the best results.
-  - Your TikTok account must have the ability to save drafts; otherwise, the code may not work correctly.
+  - Your TikTok account MUST have the ability to save drafts; otherwise, the code will not work correctly. If your account does not have the ability to save drafts, you will be prompted with a warning message during execution
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 10 days in advance.
@@ -102,6 +102,6 @@ For more details, please feel free to contact me at haziqmk123@gmail.com or on L
 
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
 - **Supported Captcha's**: Showcases the Captcha's the code is able to solve
-- **Runtime**: Provides an estimate of how much runtime by different parameters
-- **Other Notes**: Highlights recommendations and limitations related to TikTok accounts and scheduling.
+- **Runtime**: Provides an estimate of how much runtime is added by different parameters
+- **IMP Notes**: Highlights important recommendations and limitations related to TikTok accounts and scheduling.
 - **Example Usage**: Demonstrates a practical example of how to use the function.
