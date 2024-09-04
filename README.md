@@ -51,7 +51,9 @@ playwright install
 
 Here's how to upload a video to TikTok with hashtags using `tiktokautouploader`:
 
-NOTE: it is recommended that you use a tiktok account that has at least a week or two of cookies.
+NOTE: It is highly recommended you read DOCUMENTATION.md before using the library.
+
+The first time you run the code, you will be prompted to log-in, this will only occur the first time the function is used. Check documentation for more info.
 
 ```python
 from tiktokautouploader import upload_tiktok
