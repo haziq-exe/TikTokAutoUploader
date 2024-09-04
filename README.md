@@ -5,8 +5,7 @@
 
 ### AUTOMATE TIKTOK UPLOADS. USE TRENDING SOUNDS 🔊, AUTOSOLVES CAPTCHAS 🧠, ADD WORKING HASHTAGS 💯, SCHEDULE UPLOADS 🗓️ AND MORE 🎁
 
-[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 <p align="center">
