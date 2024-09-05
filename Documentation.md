@@ -93,7 +93,7 @@ This document provides detailed information about the parameters and usage of th
 ## 🕰️ Runtime:
 **Total runtime depends on how long TikTok takes to upload your video to their servers, usually it should take anywhere between 1-5 minutes, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha's:** 3 - 5 secs
+- **Captcha's:** 6 - 10 secs
 - **Adding Sound:** 3 - 4 secs
 - **Scheduling:** 1 - 3 secs
 - **Copyright Check:** 4 - 7 secs (In rare cases it can be longer due to large file size)
