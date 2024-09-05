@@ -25,7 +25,8 @@ This document provides detailed information about the parameters and usage of th
   - An array of hashtag strings (e.g., `['#example', '#fun']`) to be added to the video description.
 
 - **`sound_name`** (str, optional, default: None)
-  - The name of the TikTok sound that you want to use for the video. This sound will be applied during the upload. Defaults to None
+  - The name of the TikTok sound that you want to use for the video. This sound will be applied during the upload.
+  - NOTE: please be specific with sound name (include sound creator name also if possible)
 
 - **`sound_aud_vol`** (str, optional, default: `'mix'`)
   - Determines the volume mix between the TikTok sound and the original video audio. Accepts one of the following options:
