@@ -68,7 +68,7 @@ upload_tiktok(video=video_path, description=description, hashtags=hashtags)
 ### Upload with TikTok Sound
 
 ```python
-upload_tiktok(video=video_path, description=description, sound_name='trending_sound')
+upload_tiktok(video=video_path, description=description, sound_name='trending_sound', sound_aud_vol='main')
 ```
 
 PLEASE READ DOCUMENTATION FOR MORE INFO.
