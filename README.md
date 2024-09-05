@@ -36,7 +36,7 @@ pip install tiktokautouploader
 To do so, just run the following command AFTER installing the package:
 
 ```bash
-playwright install
+python -m playwright install chromium
 ```
 
 ## ⚙️ Pre-requisites
