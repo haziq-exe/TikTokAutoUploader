@@ -33,6 +33,7 @@ This document provides detailed information about the parameters and usage of th
     - `'mix'`: The TikTok sound and original audio will have a 50/50 split.
     - `'background'`: The original audio will be louder, and the TikTok sound will be faintly heard in the background.
     - `'main'`: The TikTok sound will be louder, and the original audio will be faintly heard in the background.
+  - Defaults to `'mix'` if invalid option chosen
 
 - **`schedule`** (str, optional, default: None)
   - The time you want the video to be uploaded. The format should be `HH:MM`, and the minute (`MM`) must be a multiple of 5. The scheduled time must be at least 15 minutes later than the current local time (unless scheduling for a different day). The time should be in your local time zone.
