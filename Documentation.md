@@ -91,11 +91,11 @@ This document provides detailed information about the parameters and usage of th
 </p>
 
 ## 🕰️ Runtime:
-**Total runtime depends on how long TikTok takes to upload your video to their servers, usually it should take anywhere between 1-5 minutes, however, here are approximations on how much runtime is added by each parameter**
+**Total runtime depends on how long TikTok takes to upload your video to their servers, usually that should take anywhere between 1-3 minutes (can be longer depending on your Wi-Fi connection), however, here are approximations on how much runtime is added by each extra task**
 
-- **Captcha's:** 6 - 10 secs
+- **Captcha:** 6 - 10 secs
 - **Adding Sound:** 3 - 4 secs
-- **Scheduling:** 1 - 3 secs
+- **Scheduling:** 1 - 2 secs
 - **Copyright Check:** 4 - 7 secs (In rare cases it can be longer due to large file size)
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
