@@ -7,7 +7,7 @@ This document provides detailed information about the parameters and usage of th
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
 - **Initialization Info**: Details instances that occur during first run of function
 - **Important Notes**: Highlights important account recommendations and limitations related to TikTok accounts and scheduling.
-- **Supported Captchas**: Showcases the Captcha's the code is able to solve
+- **Supported Captchas**: Showcases the Captchas the code is able to solve
 - **Runtime**: Provides an estimate of how much runtime is added by different parameters
 - **Example Usage**: Demonstrates a practical example of how to use the function.
 
@@ -76,13 +76,13 @@ This document provides detailed information about the parameters and usage of th
 
 ## ⛔ Supported Captchas:
 
-- **Captcha solver currently works perfectly for Captcha's of type:**
+### Captcha solver currently supports Captchas of type:
 <p align="center">
-  <img src="READMEimage/Captcha1.gif" alt="" width="200" loop=infinite/>
+  <img src="READMEimage/Captcha1.gif" alt="" width="250" loop=infinite/>
 </p>
 
 <p align="center">
-  <img src="READMEimage/Captcha2.gif" alt="" width="200" loop=infinite/>
+  <img src="READMEimage/2ndCaptcha.gif" alt="" width="250" loop=infinite/>
 </p>
 
 ## 🕰️ Runtime:
