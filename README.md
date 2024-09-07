@@ -108,7 +108,7 @@ These will be automatically installed when you install the package.
 
 ## 👤 Author
 
-Created by **Haziq Khalid**. Feel free to reach out at [haziqmk123@gmail.com](mailto:haziqmk123@gmail.com) or my LinkedIn.
+Created by **Haziq**. Feel free to reach out at [haziqmk123@gmail.com](mailto:haziqmk123@gmail.com)
 
 ## 📄 License
 
