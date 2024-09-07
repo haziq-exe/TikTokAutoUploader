@@ -10,7 +10,7 @@ long-description = "file: README.md"
 long-description-content-type = "text/markdown"
 keywords = ["tiktok", "autoupload", "tiktokautoupload"]
 authors = [
-    { name = "HAZIQ KHALID", email = "haziqmk123@gmail.com" }
+    { name = "HAZIQ", email = "haziqmk123@gmail.com" }
 ]
 urls = { "Homepage" = "https://github.com/haziq-exe/TikTokAutoUploader" }
 classifiers = [
@@ -42,7 +42,7 @@ long_description = "file: README.md"
 long_description_content_type = "text/markdown"
 keywords = ["tiktok", "autoupload", "tiktokautoupload"]
 authors = [
-    { name = "HAZIQ KHALID", email = "haziqmk123@gmail.com" }
+    { name = "HAZIQ", email = "haziqmk123@gmail.com" }
 ]
 urls = { "Homepage" = "https://github.com/haziq-exe/TikTokAutoUploader" }
 classifiers = [
