@@ -49,7 +49,7 @@ This document provides detailed information about the parameters and usage of th
 - **`copyrightcheck`** (bool, optional, default: `False`)
   - If set to `True`, the function will conduct a copyright check on TikTok before uploading. If the check fails, the code execution will stop.
 
-- **`suppressprint`** (bool, optional, default: `True`)
+- **`suppressprint`** (bool, optional, default: `False`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
 
