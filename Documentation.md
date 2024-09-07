@@ -82,7 +82,7 @@ This document provides detailed information about the parameters and usage of th
 </p>
 
 <p align="center">
-  <img src="" alt="" width="200" loop=infinite/>
+  <img src="READMEimage/Captcha2.gif" alt="" width="200" loop=infinite/>
 </p>
 
 ## 🕰️ Runtime:
