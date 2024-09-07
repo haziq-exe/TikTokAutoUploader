@@ -40,11 +40,11 @@ pip install tiktokautouploader
 
 2. **Browser Binaries:** If you don't have them already, you'll need to install the browser binaries for `playwright`.
 
-To do so, just run the following command AFTER installing the package:
-
-```bash
-python -m playwright install
-```
+     to do so, just run the following command AFTER installing the package:
+        
+    ```bash
+    python -m playwright install
+    ```
 
 
 ## 📝 Quick-Start
