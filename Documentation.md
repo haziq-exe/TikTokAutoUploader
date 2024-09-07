@@ -47,7 +47,7 @@ This document provides detailed information about the parameters and usage of th
     - If scheduling for the next month, you can only schedule within the first 5 days of the next month (as long as they are also within 10 days of the current date). i.e: If current day is Sept 30th, day=5 will upload on Oct 5th, 6 WILL NOT WORK.
 
 - **`copyrightcheck`** (bool, optional, default: `False`)
-  - If set to `True`, the function will conduct a copyright check on TikTok before uploading. If the check fails, the video will be saved as a draft, and the code execution will stop.
+  - If set to `True`, the function will conduct a copyright check on TikTok before uploading. If the check fails, the code execution will stop.
 
 - **`suppressprint`** (bool, optional, default: `True`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
