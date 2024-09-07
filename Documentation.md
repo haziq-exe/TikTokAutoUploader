@@ -53,7 +53,7 @@ This document provides detailed information about the parameters and usage of th
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
 
-### 🛠️ Initialization Info
+## 🛠️ Initialization Info
 
 - **During FIRST RUN:** 
 
@@ -64,7 +64,7 @@ This document provides detailed information about the parameters and usage of th
   - Runtime might be a 20-30 seconds longer than usual, this is due to libraries being built. Runtime should return to normal after first run
 
 
-### 📝 Important Notes
+## 📝 Important Notes
 
 - **VERY IMPORTANT: TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
