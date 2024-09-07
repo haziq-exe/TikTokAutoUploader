@@ -38,12 +38,12 @@ pip install tiktokautouploader
    - **Note:** The necessary JavaScript dependencies (`playwright`,`playwright-extra`, `puppeteer-extra-plugin-stealth`) will be AUTOMATICALLY installed the first time you run the function, so you don't need to install them manually. Make sure that `npm` (Node.js package manager) is available in your system's PATH.
 
 
-2. **Browser Binaries:** If you don't have them already, you'll need to install the chromium browser binary for `playwright`.
+2. **Browser Binaries:** If you don't have them already, you'll need to install the browser binaries for `playwright`.
 
 To do so, just run the following command AFTER installing the package:
 
 ```bash
-python -m playwright install chromium
+python -m playwright install
 ```
 
 
