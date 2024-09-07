@@ -78,11 +78,11 @@ This document provides detailed information about the parameters and usage of th
 
 - **Captcha solver currently works perfectly for Captcha's of type:**
 <p align="center">
-  <img src="READMEimage/Captcha1.gif" alt="" width="200"/>
+  <img src="READMEimage/Captcha1.gif" alt="" width="200", loop=infinite/>
 </p>
 
 <p align="center">
-  <img src="READMEimage/Captcha2.gif" alt="" width="200"/>
+  <img src="READMEimage/Captcha2.gif" alt="" width="200", loop=infinite/>
 </p>
 
 ## 🕰️ Runtime:
