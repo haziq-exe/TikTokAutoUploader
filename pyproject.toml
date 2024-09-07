@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tiktokautouploader"
-version = "2.66"
+version = "2.8"
 description = "Upload or schedule videos to TikTok with TikTok sounds and hashtags that work."
 long-description = "file: README.md"
 long-description-content-type = "text/markdown"
@@ -36,7 +36,7 @@ tags = ["wheel"]
 
 [tool.hatch.metadata]
 name = "tiktokautouploader"
-version = "2.66"
+version = "2.8"
 description = "Upload or schedule videos to TikTok with TikTok sounds and hashtags that work."
 long_description = "file: README.md"
 long_description_content_type = "text/markdown"

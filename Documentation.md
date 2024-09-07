@@ -52,10 +52,6 @@ This document provides detailed information about the parameters and usage of th
 - **`suppressprint`** (bool, optional, default: `True`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
-### 📝 IMPORTANT Notes
-- **`suppressprint`** (bool, optional, default: `False`)
-  - When `True`, uppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
-
 
 ### 🛠️ Initialization Info
 
@@ -65,17 +61,14 @@ This document provides detailed information about the parameters and usage of th
 
   - Javascript dependencies will be automatically downloaded, once downloaded it will not attempt to download it again unless the files get deleted.
   
-  - Runtime might be a 20-30 seconds longer than usual, this is due to libraries being built and runtime should return to normal after first run
+  - Runtime might be a 20-30 seconds longer than usual, this is due to libraries being built. Runtime should return to normal after first run
 
 
 ### 📝 Important Notes
 
-- **TikTok Account Recommendations**:
-  - It is recommended to have a TikTok account with at least a few weeks of cookies built up for the best results.
-  - Your TikTok account MUST have the ability to save drafts; otherwise, the code will not work correctly. If your account does not have the ability to save drafts, you will be prompted with a warning message during execution
 - **VERY IMPORTANT: TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
-  - Your TikTok account MUST have the ability to save drafts; otherwise, the code may not work correctly.
+  - If you want to upload your video with TikTok sounds, your TikTok account MUST have the ability to save drafts; otherwise, you can just upload/schedule the video with copyright checks and trending hashtags
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 10 days in advance.
@@ -85,20 +78,20 @@ This document provides detailed information about the parameters and usage of th
 
 - **Captcha solver currently works perfectly for Captcha's of type:**
 <p align="center">
-  <img src="READMEimage/CaptchaImage1.jpg" alt="" width="200"/>
+  <img src="READMEimage/Captcha1.gif" alt="" width="200"/>
 </p>
 
 <p align="center">
-  <img src="READMEimage/CaptchaImage2.jpg" alt="" width="200"/>
+  <img src="READMEimage/Captcha2.gif" alt="" width="200"/>
 </p>
 
 ## 🕰️ Runtime:
-**Total runtime depends on how long TikTok takes to upload your video to their servers, usually that should take anywhere between 1-3 minutes (can be longer depending on your Wi-Fi connection), however, here are approximations on how much runtime is added by each extra task**
+**Total runtime depends on how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha:** 6 - 10 secs
-- **Adding Sound:** 3 - 4 secs
-- **Scheduling:** 1 - 2 secs
-- **Copyright Check:** 4 - 7 secs (In rare cases it can be longer due to large file size)
+- **Captcha's:** 3 - 5 secs (in RARE cases, it can take 10-15 seconds longer)
+- **Adding Sound:** 5 - 10 secs
+- **Scheduling:** 1 - 3 secs
+- **Copyright Check:** 2 - 7 secs
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
 
@@ -123,10 +116,4 @@ upload_tiktok(
 )
 ```
 
-For more details, please feel free to contact me at haziqmk123@gmail.com or on LinkedIn (on my github profile)
-
-### Key Sections:
-
-- **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
-- **Other Notes**: Highlights recommendations and limitations related to TikTok accounts and scheduling.
-- **Example Usage**: Demonstrates a practical example of how to use the function.
+For more details or if errors persist, please feel free to contact me at haziqmk123@gmail.com or on LinkedIn (on my github profile)
