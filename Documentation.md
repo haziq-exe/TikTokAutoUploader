@@ -85,6 +85,8 @@ This document provides detailed information about the parameters and usage of th
   <img src="READMEimage/2ndCaptcha.gif" alt="" width="250" loop=infinite/>
 </p>
 
+#### Note: these videos are just to showcase the project's ability to auto-solve captcha's, this entire process will take place 'under the hood' you will not see the captcha being solved.
+
 ## 🕰️ Runtime:
 **Total runtime depends on how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
