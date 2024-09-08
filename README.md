@@ -93,6 +93,7 @@ upload_tiktok(video=video_path, description=description, hashtags=hashtags, copy
 - **Maximize your reach:** Add popular sounds and effective hashtags that work to boost visibility.
 - **Stay compliant:** Built-in copyright checks to avoid unforeseen takedowns.
 - **Convenient scheduling:** Post at the right time, even when you're away.
+- **Much faster than manually uploading:** Drastically reduce the time you need to upload videos, just click one button and be done much quicker!
 
 ## 🛠 Dependencies
 
