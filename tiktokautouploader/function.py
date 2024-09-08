@@ -9,7 +9,7 @@ from PIL import Image
 import sys
 import os
 import warnings
-warnings.filterwarnings("ignore")
+warnings.simplefilter("ignore")
 
 def login_warning():
     print("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED")
@@ -38,6 +38,7 @@ def check_expiry():
 def run_javascript():
     js_file_path = pkg_resources.resource_filename(__name__, 'Js_assets/login.js')
     result = subprocess.run(['node', js_file_path], capture_output=True, text=True)
+    return result
 
 def install_js_dependencies():
     js_dir = pkg_resources.resource_filename(__name__, 'Js_assets')
@@ -46,6 +47,7 @@ def install_js_dependencies():
     if not os.path.exists(node_modules_path):
         print("JavaScript dependencies not found. Installing...")
         subprocess.run(['npm', 'install', 'playwright', 'playwright-extra', 'puppeteer-extra-plugin-stealth', '--silent'], cwd=js_dir, check=True)
+        subprocess.run(['npx', 'playwright', 'install', 'chromium'], cwd=js_dir, check=True)
     else:
         time.sleep(0.1)
 
@@ -220,7 +222,6 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
     retries = 0
     cookie_read = False
-    install_js_dependencies()
 
     if os.path.exists('TK_cookies.json'):
         cookies, cookie_read = read_cookies(cookies_path='TK_cookies.json')
@@ -231,8 +232,9 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
             cookie_read = False
     
     if cookie_read == False:
+        install_js_dependencies()
         login_warning()
-        run_javascript()
+        result = run_javascript()
 
         cookies, cookie_read = read_cookies("TK_cookies.json")
         if cookie_read == False:
@@ -241,13 +243,12 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
     with sync_playwright() as p:
         
-        browser = p.firefox.launch(headless=True)
+        browser = p.webkit.launch(headless=False)
 
         context = browser.new_context()
         context.add_cookies(cookies)
         page = context.new_page()
         url = 'https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en'
-        url2 = 'https://www.tiktok.com/tiktokstudio/content?tab=draft'
 
         while retries < 2:
             try:
@@ -418,7 +419,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
         time.sleep(0.2)
         if suppressprint == False:
             print("Tik tok done loading file onto servers")
-        
+
         if schedule != None:
             try:
                 hour = schedule[0:2]
@@ -464,90 +465,8 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
             
         if (schedule == None) and (day != None):
             sys.exit("ERROR: CANT SCHEDULE FOR ANOTHER DAY USING 'day' WITHOUT ALSO INCLUDING TIME OF UPLOAD WITH 'schedule'; PLEASE ALSO INCLUDE TIME WITH 'schedule' PARAMETER")
-
-
-        if(sound_name == None):
-            if copyrightcheck == True:
-                page.locator(".TUXSwitch-input").nth(0).click()
-                while copyrightcheck == True:
-                    time.sleep(0.2)
-                    if page.locator("span", has_text="No issues detected.").is_visible():
-                        if suppressprint == False:
-                            print("Copyright check complete")
-                        break
-                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
-                        sys.exit("COPYRIGHT CHECK FAILED: COPYRIGHT AUDIO DETECTED FROM TIKTOK")
-    
-            if schedule == None:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                        time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            else:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                        time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            if suppressprint == False:
-                print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
         
-            page.close()
-
-        else:
-            try:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--secondary:has-text("Save draft")', timeout=10000)
-            except:
-                sys.exit("SAVE AS DRAFT BUTTON NOT FOUND; CANNOT ADD SOUND WITHOUT ABILITY TO SAVE DRAFTS")
-            
-            time.sleep(0.5)
-            page.close()
-
-            browser = p.chromium.launch(headless=True)
-
-            context = browser.new_context()
-            context.add_cookies(cookies)
-            page = context.new_page()
-            url2 = 'https://www.tiktok.com/tiktokstudio/content?tab=draft'
-
-            while retries < 2:
-                try:
-                    page.goto(url2, timeout=30000)
-                except:
-                    retries +=1
-                    time.sleep(5)
-                    if retries == 2:
-                        sys.exit("ERROR: TIK TOK PAGE FAILED TO LOAD, try again.")
-                else:
-                    break
-            
-            try:
-                page.wait_for_selector("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
-                page.click("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
-                page.wait_for_selector('div[data-contents="true"]')
-                page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=3000000)  
-                time.sleep(0.2)
-            except:
-                sys.exit("ERROR ADDING SOUND: Video saved as draft")
-
-            if sound_name != None:
+        if sound_name != None:
                 page.click("div.TUXButton-label:has-text('Edit video')")
                 page.wait_for_selector("input.search-bar-input")
                 page.fill(f"input.search-bar-input", f"{sound_name}")
@@ -602,9 +521,9 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                 if suppressprint == False:
                     print("Added sound")
                 
-            page.wait_for_selector('div[data-contents="true"]')
+        page.wait_for_selector('div[data-contents="true"]')
 
-            if copyrightcheck == True:
+        if copyrightcheck == True:
                 page.locator(".TUXSwitch-input").nth(0).click()
                 while copyrightcheck == True:
                     time.sleep(0.2)
@@ -616,40 +535,40 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
             
 
-            try:
-                if schedule == None:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
-                    uploaded = False
-                    checks = 0
-                    while uploaded == False:
-                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                            time.sleep(0.2)
-                            break
+        try:
+            if schedule == None:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                uploaded = False
+                checks = 0
+                while uploaded == False:
+                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
                         time.sleep(0.2)
-                        checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
-                            break
-                else:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
-                    uploaded = False
-                    checks = 0
-                    while uploaded == False:
-                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                            time.sleep(0.2)
-                            break
+                        break
+                    time.sleep(0.2)
+                    checks += 1
+                    if checks > 100:
+                        time.sleep(10)
+                    if checks == 150:
+                        break
+            else:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                uploaded = False
+                checks = 0
+                while uploaded == False:
+                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
                         time.sleep(0.2)
-                        checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
-                            break
-                if suppressprint == False:
-                    print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
-            except:
-                time.sleep(5)
-                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
-            time.sleep(1)
+                        break
+                    time.sleep(0.2)
+                    checks += 1
+                    if checks > 100:
+                        time.sleep(10)
+                    if checks == 150:
+                        break
+            if suppressprint == False:
+                print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
+        except:
+            time.sleep(5)
+            sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+        time.sleep(1)
 
-            page.close()
+        page.close()
