@@ -9,7 +9,7 @@
 
 
 <p align="center">
-  <img src="READMEimage/READMEimg.png" alt="" width="150"/>
+  <img src="READMEimage/READMEvid.gif" alt="" width="900"/>
 </p>
 
 ## 🚀 Features
