@@ -19,6 +19,7 @@
 - **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
 - **🔍 Copyright Check:** Ensure your video is safe from copyright claims before uploading.
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
+- **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library
 
 
 ## 📦 Installation
