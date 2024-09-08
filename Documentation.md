@@ -85,7 +85,12 @@ This document provides detailed information about the parameters and usage of th
   <img src="READMEimage/2ndCaptcha.gif" alt="" width="250" loop=infinite/>
 </p>
 
-#### Note: these videos are just to showcase the project's ability to auto-solve captcha's, this entire process will take place 'under the hood' you will not see the captcha being solved.
+#### Note: 
+- These GIFs are just to showcase the project's ability to auto-solve captcha's, this entire process will take place 'under the hood', you will not see the captcha being solved.
+
+- As far as I'm aware these captchas are the only types of captchas that you may encounter when trying to upload TikTok's, if you do encounter a different captcha, I highly encourage you to email me and let me know and I will try to increase the capabilities of this project to include those captcha's as well.
+
+- To check what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
 ## 🕰️ Runtime:
 **Total runtime depends on how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
