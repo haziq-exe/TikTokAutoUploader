@@ -11,13 +11,29 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
-
 def login_warning():
     print("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED")
 
 def save_cookies(cookies):
     with open('TK_cookies.json', 'w') as file:
         json.dump(cookies, file, indent=4)
+
+def check_expiry():
+    with open('TK_cookies.json', 'r') as file:
+        cookies = json.load(file)
+
+    current_time = int(time.time())
+    cookies_expire = []
+    expired = False
+    for cookie in cookies:
+        if cookie['name'] in ['sessionid', 'sid_tt', 'sessionid_ss', 'passport_auth_status']:
+            expiry = cookie.get('expires')
+            cookies_expire.append(expiry < current_time)
+
+    if all(cookies_expire):
+        expired = True
+
+    return expired
 
 def run_javascript():
     js_file_path = pkg_resources.resource_filename(__name__, 'Js_assets/login.js')
@@ -204,12 +220,17 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
     retries = 0
     cookie_read = False
+    install_js_dependencies()
 
     if os.path.exists('TK_cookies.json'):
         cookies, cookie_read = read_cookies(cookies_path='TK_cookies.json')
+        expired = check_expiry()
+        if expired == True:
+            os.remove('TK_cookies.json')
+            print("COOKIES EXPIRED, PLEASE LOG-IN AGAIN")
+            cookie_read = False
     
     if cookie_read == False:
-        install_js_dependencies()
         login_warning()
         run_javascript()
 
@@ -243,7 +264,6 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
         captcha = False
         while detected == False:
             if page.locator('.upload-text-container').is_visible():
-                print("Showed up")
                 detected = True
             else:
                 if page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').is_visible():
@@ -330,7 +350,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         click_on_objects(page, webpage_coords)
                         time.sleep(0.5)
                         page.click("div.verify-captcha-submit-button")
-                        if attempts > 5:
+                        if attempts > 10:
                             sys.exit("FAILED TO SOLVE CAPTCHA")
                         try:
                             page.wait_for_selector('.upload-text-container', timeout=5000)
@@ -410,7 +430,13 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                 sys.exit("SCHEDULE TIME ERROR: PLEASE MAKE SURE YOUR SCHEDULE TIME IS A STRING THAT FOLLOWS THE 24H FORMAT 'HH:MM', VIDEO SAVED AS DRAFT")
 
             page.locator('div.TUXRadioStandalone.TUXRadioStandalone--medium').nth(1).click()
-            time.sleep(0.2)
+            time.sleep(1)
+            if page.locator('button.TUXButton.TUXButton--default.TUXButton--medium.TUXButton--primary:has-text("Allow")').nth(0).is_visible():
+                page.locator('button.TUXButton.TUXButton--default.TUXButton--medium.TUXButton--primary:has-text("Allow")').nth(0).click()
+                time.sleep(0.2)
+            else:
+                if page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(1).is_visible():
+                    time.sleep(0.2)
             if day != None:
                 page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(1).click()
                 time.sleep(0.2)
