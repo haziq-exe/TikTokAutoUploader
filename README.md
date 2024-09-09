@@ -14,6 +14,8 @@
 
 ## 🚀 Features
 
+CURRENT STATUS: NOT OPERATIONAL, Fixing bugs
+
 - **🔐 Bypass/Auto Solve Captchas:** No need to worry about any captchas interrupting the process, they'll be solved!
 - **🎵 Use TikTok Sounds:** Go viral by seamlessly adding popular TikTok sounds to your videos.
 - **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
