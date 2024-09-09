@@ -14,8 +14,6 @@
 
 ## 🚀 Features
 
-CURRENT STATUS: NOT OPERATIONAL, Fixing bugs
-
 - **🔐 Bypass/Auto Solve Captchas:** No need to worry about any captchas interrupting the process, they'll be solved!
 - **🎵 Use TikTok Sounds:** Go viral by seamlessly adding popular TikTok sounds to your videos.
 - **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
@@ -41,13 +39,15 @@ pip install tiktokautouploader
    - **Note:** The necessary JavaScript dependencies (`playwright`,`playwright-extra`, `puppeteer-extra-plugin-stealth`) will be AUTOMATICALLY installed the first time you run the function, so you don't need to install them manually. Make sure that `npm` (Node.js package manager) is available in your system's PATH.
 
 
-2. **Browser Binaries:** If you don't have them already, you'll need to install the browser binaries for `playwright`.
+2. **Browser Binaries:** If you don't have them already, you'll need to install the browser binaries for `playwright`. This library uses chromium and firefox.
 
      to do so, just run the following command AFTER installing the package:
         
     ```bash
     python -m playwright install
     ```
+
+**NOTE:** If you want to add sounds to your TikTok, you MUST have the ability to save drafts. If you don't want to add sounds then you don't need this feature.
 
 
 ## 📝 Quick-Start
