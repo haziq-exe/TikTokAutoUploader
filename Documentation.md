@@ -93,12 +93,14 @@ This document provides detailed information about the parameters and usage of th
 - To check what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
 ## 🕰️ Runtime:
-**Total runtime depends on how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
+**Total runtime depends on your wifi connection and how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha's:** 3 - 5 secs (during first run or in RARE cases, it can take 10-15 seconds longer)
-- **Adding Sound:** 5 - 10 secs
+- **Captcha's:** 8 - 15 secs (in RARE cases, it may take longer)
+- **Adding Sound:** 8 - 12 secs
 - **Scheduling:** 1 - 3 secs
 - **Copyright Check:** 2 - 7 secs
+
+- All in all, runtime shouldn't exceed one minute in most cases.
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
 
