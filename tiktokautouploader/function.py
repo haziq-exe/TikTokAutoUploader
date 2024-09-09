@@ -88,11 +88,24 @@ def understood_Qs(question):
         'has strings': 'guitar',
         'oval and inflatable': 'football',
         'strumming': 'guitar',
-        'bounces on courts': 'basketball',
+        'bounces': 'basketball',
         'musical instrument': 'guitar',
         'laces': 'football',
         'bands': 'guitar',
-        'leather': 'football'
+        'leather': 'football',
+        'leaves':'tree',
+        'pages': 'book',
+        'throwing': 'football',
+        'tossed in a spiral': 'football',
+        'spiky crown': 'pineapple',
+        'pigskin': 'football',
+        'photography': 'camera',
+        'lens': 'camera',
+        'grow': 'tree',
+        'captures images': 'camera',
+        'keeps doctors': 'apple',
+        'crown': 'pineapple',
+        'driven': 'car',
         }
     
     for key in understood_terms.keys():
@@ -118,8 +131,7 @@ def download_image(image_url):
 
 def run_inference_on_image_tougher(image_path, object):
 
-    found_proper = False
-    model = inference.get_model("captcha-2-6ehbe/1")
+    model = inference.get_model("captcha-2-6ehbe/2")
     results = model.infer(image=image_path)
 
     class_names = []
@@ -139,12 +151,9 @@ def run_inference_on_image_tougher(image_path, object):
         if classes == class_to_click:
             bounding_box.append(bounding_boxes[i])
     
-    if len(bounding_box) == 2:
-        found_proper = True
 
-    found_proper = True
 
-    return bounding_box, found_proper
+    return bounding_box
 
 def run_inference_on_image(image_path):
 
@@ -222,6 +231,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
     retries = 0
     cookie_read = False
+    oldQ = 'N.A'
 
     if os.path.exists('TK_cookies.json'):
         cookies, cookie_read = read_cookies(cookies_path='TK_cookies.json')
@@ -280,24 +290,28 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                     print("CAPTCHA DETECTED, Attempting to solve")
                 solved = False
                 attempts = 0
+                question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
                 while solved == False:
                     attempts += 1
-                    question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
+                    start_time = time.time()
+                    while question == oldQ:
+                        question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
+                        if time.time() - start_time > 2:
+                            break
                     if 'Select 2 objects that are the same' in question:
                         found = False
                         while found == False:
                             page.click('span.secsdk_captcha_refresh--text')
-                            time.sleep(0.5)
                             image = get_image_src(page)
                             img_path = download_image(image)
                             b_box, found = run_inference_on_image(image_path=img_path)
                     
                         with Image.open(img_path) as img:
                             image_size = img.size
-                    
-                        image = page.locator('#captcha-verify-image')
-                        image.wait_for()
-                        box = image.bounding_box()
+                        
+                        imageweb = page.locator('#captcha-verify-image')
+                        imageweb.wait_for()
+                        box = imageweb.bounding_box()
                         image_x = box['x']
                         image_y = box['y']
                         image_height_web = box['height']
@@ -309,36 +323,39 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         time.sleep(0.5)
                         if attempts > 5:
                             sys.exit("FAILED TO SOLVE CAPTCHA")
-                        try:
-                            page.wait_for_selector('.upload-text-container', timeout=5000)
-                            os.remove('captcha_image.jpg')
-                            if suppressprint == False:
-                                print("Captcha Solved")
-                            solved = True
-                        except:
-                            continue
-                    else:
-                        found_prop = False
-                        while found_prop == False:
-                            page.click('span.secsdk_captcha_refresh--text')
-                            time.sleep(0.5)
-                            question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
-                            objectclick = understood_Qs(question)
-                            while objectclick == 'N.A':
+                        while showedup == False:
+                            if page.locator("div.captcha_verify_message.captcha_verify_message-pass").is_visible():
+                                solved = True
+                                showedup = True
+                            if page.locator("div.captcha_verify_message.captcha_verify_message-fail").is_visible():
+                                showedup = True
+                                oldQ = question
                                 page.click('span.secsdk_captcha_refresh--text')
-                                page.wait_for_selector('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT')
+                    else:
+                        objectclick = understood_Qs(question)
+                        while objectclick == 'N.A':
+                            oldQ = question
+                            page.click('span.secsdk_captcha_refresh--text')
+                            start_time = time.time()
+                            runs = 0
+                            while question == oldQ:
+                                runs += 1
                                 question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
-                                objectclick = understood_Qs(question)
-                            image = get_image_src(page)
-                            img_path = download_image(image)
-                            b_box, found_prop = run_inference_on_image_tougher(image_path=img_path, object=objectclick)
-                        
+                                if runs > 1:
+                                    time.sleep(1)
+                                if time.time() - start_time > 2:
+                                    break
+                            objectclick = understood_Qs(question)
+                        image = get_image_src(page)
+                        img_path = download_image(image)
+                        b_box = run_inference_on_image_tougher(image_path=img_path, object=objectclick)
+                    
                         with Image.open(img_path) as img:
                             image_size = img.size
-                    
-                        image = page.locator('#captcha-verify-image')
-                        image.wait_for()
-                        box = image.bounding_box()
+
+                        imageweb = page.locator('#captcha-verify-image')
+                        imageweb.wait_for()
+                        box = imageweb.bounding_box()
                         image_x = box['x']
                         image_y = box['y']
                         image_height_web = box['height']
@@ -347,20 +364,22 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
                         webpage_coords = convert_to_webpage_coordinates(b_box, image_x, image_y, image_height_web, image_width_web, image_height_real, image_width_real)
                         
-                        
                         click_on_objects(page, webpage_coords)
-                        time.sleep(0.5)
                         page.click("div.verify-captcha-submit-button")
-                        if attempts > 10:
+                        if attempts > 20:
                             sys.exit("FAILED TO SOLVE CAPTCHA")
-                        try:
-                            page.wait_for_selector('.upload-text-container', timeout=5000)
-                            solved = True
-                            os.remove('captcha_image.jpg')
-                            if suppressprint == False:
-                                print("Captcha Solved")
-                        except:
-                            continue
+                        showedup = False
+                        while showedup == False:
+                            if page.locator("div.captcha_verify_message.captcha_verify_message-pass").is_visible():
+                                solved = True
+                                showedup = True
+                                os.remove('captcha_image.jpg')
+                                if suppressprint == False:
+                                    print("CAPTCHA SOLVED")
+                            if page.locator("div.captcha_verify_message.captcha_verify_message-fail").is_visible():
+                                showedup = True
+                                oldQ = question
+                                page.click('span.secsdk_captcha_refresh--text')
 
         
         try:
@@ -465,8 +484,89 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
             
         if (schedule == None) and (day != None):
             sys.exit("ERROR: CANT SCHEDULE FOR ANOTHER DAY USING 'day' WITHOUT ALSO INCLUDING TIME OF UPLOAD WITH 'schedule'; PLEASE ALSO INCLUDE TIME WITH 'schedule' PARAMETER")
+
+        if(sound_name == None):
+            if copyrightcheck == True:
+                page.locator(".TUXSwitch-input").nth(0).click()
+                while copyrightcheck == True:
+                    time.sleep(0.2)
+                    if page.locator("span", has_text="No issues detected.").is_visible():
+                        if suppressprint == False:
+                            print("Copyright check complete")
+                        break
+                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                        sys.exit("COPYRIGHT CHECK FAILED: COPYRIGHT AUDIO DETECTED FROM TIKTOK")
+    
+            if schedule == None:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                uploaded = False
+                checks = 0
+                while uploaded == False:
+                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                        time.sleep(0.2)
+                        break
+                    time.sleep(0.2)
+                    checks += 1
+                    if checks > 100:
+                        time.sleep(10)
+                    if checks == 150:
+                        break
+            else:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                uploaded = False
+                checks = 0
+                while uploaded == False:
+                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                        time.sleep(0.2)
+                        break
+                    time.sleep(0.2)
+                    checks += 1
+                    if checks > 100:
+                        time.sleep(10)
+                    if checks == 150:
+                        break
+            if suppressprint == False:
+                print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
         
-        if sound_name != None:
+            page.close()
+
+        else:
+            try:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--secondary:has-text("Save draft")', timeout=10000)
+            except:
+                sys.exit("SAVE AS DRAFT BUTTON NOT FOUND; CANNOT ADD SOUND WITHOUT ABILITY TO SAVE DRAFTS")
+            
+            time.sleep(0.5)
+            page.close()
+
+            browser = p.chromium.launch(headless=True)
+
+            context = browser.new_context()
+            context.add_cookies(cookies)
+            page = context.new_page()
+            url2 = 'https://www.tiktok.com/tiktokstudio/content?tab=draft'
+
+            while retries < 2:
+                try:
+                    page.goto(url2, timeout=30000)
+                except:
+                    retries +=1
+                    time.sleep(5)
+                    if retries == 2:
+                        sys.exit("ERROR: TIK TOK PAGE FAILED TO LOAD, try again.")
+                else:
+                    break
+            
+            try:
+                page.wait_for_selector("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
+                page.click("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
+                page.wait_for_selector('div[data-contents="true"]')
+                page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=3000000)  
+                time.sleep(0.2)
+            except:
+                sys.exit("ERROR ADDING SOUND: Video saved as draft")
+
+            if sound_name != None:
                 page.click("div.TUXButton-label:has-text('Edit video')")
                 page.wait_for_selector("input.search-bar-input")
                 page.fill(f"input.search-bar-input", f"{sound_name}")
@@ -521,9 +621,9 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                 if suppressprint == False:
                     print("Added sound")
                 
-        page.wait_for_selector('div[data-contents="true"]')
+            page.wait_for_selector('div[data-contents="true"]')
 
-        if copyrightcheck == True:
+            if copyrightcheck == True:
                 page.locator(".TUXSwitch-input").nth(0).click()
                 while copyrightcheck == True:
                     time.sleep(0.2)
@@ -535,40 +635,40 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
             
 
-        try:
-            if schedule == None:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+            try:
+                if schedule == None:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
                         time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            else:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                else:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
                         time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            if suppressprint == False:
-                print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
-        except:
-            time.sleep(5)
-            sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
-        time.sleep(1)
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                if suppressprint == False:
+                    print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
+            except:
+                time.sleep(5)
+                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+            time.sleep(1)
 
-        page.close()
+            page.close()
