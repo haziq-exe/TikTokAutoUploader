@@ -30,6 +30,8 @@
 pip install tiktokautouploader
 ```
 
+**NOTE:** IF YOU HAVE ALREADY INSTALLED PLEASE UPGRADE TO LATEST VERSION OR ATLEAST VERSION >=2.95
+
 ---
 
 ## ⚙️ Pre-requisites
