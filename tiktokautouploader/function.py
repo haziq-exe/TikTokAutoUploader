@@ -20,17 +20,17 @@ def check_for_updates():
         latest_version = response.json()["info"]["version"]
         if current_version != latest_version:
             print(f"WARNING: You are using version {current_version} of tiktokautouploader, "
-                  f"PLEASE UPDATE TO LATEST VERSION {latest_version} FOR BUG FIXES.")
+                  f"PLEASE UPDATE TO LATEST VERSION {latest_version} FOR BEST EXPERIENCE.")
 
-def login_warning():
-    print("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED")
+def login_warning(accountname):
+    print(f"NO COOKIES FILE FOUND FOR ACCOUNT {accountname}, PLEASE LOG-IN TO {accountname} WHEN PROMPTED")
 
 def save_cookies(cookies):
     with open('TK_cookies.json', 'w') as file:
         json.dump(cookies, file, indent=4)
 
-def check_expiry():
-    with open('TK_cookies.json', 'r') as file:
+def check_expiry(accountname):
+    with open(f'TK_cookies_{accountname}.json', 'r') as file:
         cookies = json.load(file)
 
     current_time = int(time.time())
@@ -223,7 +223,7 @@ def click_on_objects(page, object_coords):
 
 
 
-def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False):
+def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False):
 
     """
     UPLOADS VIDEO TO TIKTOK
@@ -248,24 +248,28 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
     cookie_read = False
     oldQ = 'N.A'
 
-    if os.path.exists('TK_cookies.json'):
-        cookies, cookie_read = read_cookies(cookies_path='TK_cookies.json')
-        expired = check_expiry()
+    if accountname == None:
+        sys.exit("PLEASE ENTER NAME OF ACCOUNT TO POST ON, READ DOCUMENTATION FOR MORE INFO")
+
+    if os.path.exists(f'TK_cookies_{accountname}.json'):
+        cookies, cookie_read = read_cookies(cookies_path=f'TK_cookies_{accountname}.json')
+        expired = check_expiry(accountname=accountname)
         if expired == True:
-            os.remove('TK_cookies.json')
-            print("COOKIES EXPIRED, PLEASE LOG-IN AGAIN")
+            os.remove(f'TK_cookies_{accountname}.json')
+            print(f"COOKIES EXPIRED FOR ACCOUNT {accountname}, PLEASE LOG-IN AGAIN")
             cookie_read = False
     
     if cookie_read == False:
         install_js_dependencies()
-        login_warning()
+        login_warning(accountname=accountname)
         result = run_javascript()
+        os.rename('TK_cookies.json', f'TK_cookies_{accountname}.json')
 
-        cookies, cookie_read = read_cookies("TK_cookies.json")
+        cookies, cookie_read = read_cookies(f"TK_cookies_{accountname}.json")
         if cookie_read == False:
             sys.exit("ERROR READING COOKIES")
         
-
+ 
     with sync_playwright() as p:
         
         browser = p.firefox.launch(headless=True)
@@ -274,6 +278,9 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
         context.add_cookies(cookies)
         page = context.new_page()
         url = 'https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en'
+
+        if suppressprint == False:
+            print(f"Uploading to account '{accountname}'")
 
         while retries < 2:
             try:

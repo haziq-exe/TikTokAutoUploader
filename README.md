@@ -19,8 +19,8 @@
 - **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
 - **🔍 Copyright Check:** Ensure your video is safe from copyright claims before uploading.
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
-- **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library
-
+- **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library.
+- **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
 
 ## 📦 Installation
 
@@ -30,7 +30,7 @@
 pip install tiktokautouploader
 ```
 
-**NOTE:** IF YOU HAVE INSTALLED BEFORE, PLEASE MAKE SURE YOU HAVE LATEST VERSION INSTALLED OR ELSE YOU MIGHT FACE BUGS
+**NOTE:** IF YOU HAVE INSTALLED BEFORE, PLEASE MAKE SURE YOU UPGRADE TO THE LATEST VERSION.
 
 ---
 
@@ -55,7 +55,7 @@ pip install tiktokautouploader
 ## 📝 Quick-Start
 
 **NOTE:** It is highly recommended you read DOCUMENTATION.md before using the library.
-The first time you run the code, you will be prompted to log-in, this will only occur the first time the function is used. Check documentation for more info.
+The first time you run the code for an account, you will be prompted to log-in, this will only occur the first time the function is used for the account. Check documentation for more info.
 
 ## Upload with hashtags
 
@@ -64,16 +64,17 @@ from tiktokautouploader import upload_tiktok
 
 video_path = 'path/to/your/video.mp4'
 description = 'Check out my latest TikTok video!'
+accountname = 'mytiktokaccount'
 hashtags = ['#fun', '#viral']
 
-upload_tiktok(video=video_path, description=description, hashtags=hashtags)
+upload_tiktok(video=video_path, description=description, accountname=accountname, hashtags=hashtags)
 
 ```
 
 ### Upload with TikTok Sound
 
 ```python
-upload_tiktok(video=video_path, description=description, sound_name='trending_sound', sound_aud_vol='main')
+upload_tiktok(video=video_path, description=description, accountname=accountname, sound_name='trending_sound', sound_aud_vol='main')
 ```
 
 PLEASE READ DOCUMENTATION FOR MORE INFO.
@@ -81,7 +82,7 @@ PLEASE READ DOCUMENTATION FOR MORE INFO.
 ### Schedule an Upload
 
 ```python
-upload_tiktok(video=video_path, description=description, schedule='03:10', day=11)
+upload_tiktok(video=video_path, description=description, accountname=accountname, schedule='03:10', day=11)
 ```
 
 PLEASE READ DOCUMENTATION FOR MORE INFO
@@ -89,16 +90,17 @@ PLEASE READ DOCUMENTATION FOR MORE INFO
 ### Perform Copyright Check Before Uploading
 
 ```python
-upload_tiktok(video=video_path, description=description, hashtags=hashtags, copyrightcheck=True)
+upload_tiktok(video=video_path, description=description, accountname=accountname, hashtags=hashtags, copyrightcheck=True)
 ```
 
 ## 🎯 Why Choose `autotiktokuploader`?
 
 - **No more captchas:** Fully automated uploads without interruptions, If captchas do show up, no worries, they will be solved. (read documentation for more info)
-- **Maximize your reach:** Add popular sounds and effective hashtags that work to boost visibility.
+- **Maximize your reach:** Add popular sounds and effective hashtags that work to boost visibility and go viral!
 - **Stay compliant:** Built-in copyright checks to avoid unforeseen takedowns.
-- **Convenient scheduling:** Post at the right time, even when you're away.
+- **Convenient scheduling:** Post at the right time, even when you're away!
 - **Much faster than manually uploading:** Drastically reduce the time you need to upload videos, just click one button and be done much quicker!
+- **Upload to different account:** Stay on top of all your TikTok accounts with our multi-account functionality!
 
 ## 🛠 Dependencies
 
