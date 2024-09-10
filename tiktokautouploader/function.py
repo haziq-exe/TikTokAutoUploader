@@ -11,6 +11,17 @@ import os
 import warnings
 warnings.simplefilter("ignore")
 
+
+def check_for_updates():
+    current_version = pkg_resources.get_distribution("tiktokautouploader").version
+    response = requests.get("https://pypi.org/pypi/tiktokautouploader/json")
+    
+    if response.status_code == 200:
+        latest_version = response.json()["info"]["version"]
+        if current_version != latest_version:
+            print(f"WARNING: You are using version {current_version} of tiktokautouploader, "
+                  f"PLEASE UPDATE TO LATEST VERSION {latest_version} FOR BUG FIXES.")
+
 def login_warning():
     print("NO COOKIES FILE FOUND, PLEASE LOG-IN WHEN PROMPTED")
 
@@ -228,6 +239,10 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
     suppressprint (bool) -> True means function doesnt print anything to provide updates on progress
     --------------------------------------------------------------------------------------------------------------------------------------------
     """
+    try:
+        check_for_updates()
+    except:
+        time.sleep(0.1)
 
     retries = 0
     cookie_read = False
@@ -253,7 +268,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
 
     with sync_playwright() as p:
         
-        browser = p.webkit.launch(headless=False)
+        browser = p.firefox.launch(headless=True)
 
         context = browser.new_context()
         context.add_cookies(cookies)
@@ -298,7 +313,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         question = page.locator('div.VerifyBar___StyledDiv-sc-12zaxoy-0.hRJhHT').text_content()
                         if time.time() - start_time > 2:
                             break
-                    if 'Select 2 objects that are the same' in question:
+                    if 'Select 2 objects that are the same' in question or 'Select two objects that are the same' in question:
                         found = False
                         while found == False:
                             page.click('span.secsdk_captcha_refresh--text')
@@ -319,7 +334,10 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         image_width_real, image_height_real = image_size
 
                         webpage_coords = convert_to_webpage_coordinates(b_box, image_x, image_y, image_height_web, image_width_web, image_height_real, image_width_real)
+                        if not webpage_coords:
+                            webpage_coords.append((image_x + 50, image_y + 50))
                         click_on_objects(page, webpage_coords)
+                        page.click("div.verify-captcha-submit-button")
                         time.sleep(0.5)
                         if attempts > 5:
                             sys.exit("FAILED TO SOLVE CAPTCHA")
@@ -327,6 +345,7 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                             if page.locator("div.captcha_verify_message.captcha_verify_message-pass").is_visible():
                                 solved = True
                                 showedup = True
+                                os.remove('captcha_image.jpg')
                             if page.locator("div.captcha_verify_message.captcha_verify_message-fail").is_visible():
                                 showedup = True
                                 oldQ = question
@@ -363,9 +382,11 @@ def upload_tiktok(video, description, hashtags=None, sound_name=None, sound_aud_
                         image_width_real, image_height_real = image_size
 
                         webpage_coords = convert_to_webpage_coordinates(b_box, image_x, image_y, image_height_web, image_width_web, image_height_real, image_width_real)
-                        
+                        if not webpage_coords:
+                            webpage_coords.append((image_x + 50, image_y + 50))
                         click_on_objects(page, webpage_coords)
                         page.click("div.verify-captcha-submit-button")
+                        time.sleep(1)                   
                         if attempts > 20:
                             sys.exit("FAILED TO SOLVE CAPTCHA")
                         showedup = False
