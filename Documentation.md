@@ -21,11 +21,17 @@ This document provides detailed information about the parameters and usage of th
 - **`description`** (str)
   - The description text that will accompany the video when uploaded. hashtags included in description will NOT work, must be included in `hashtags` parameter
 
+- **`accountname`** (str)
+   - The name of the account you want to post on.
+     
+   - **NOTE:** When uploading to an account for the FIRST TIME ONLY, you will be prompted to log-in, once you log-in your cookies will be stored and you will not need to log-in to that account again. Read INITIALIZATION section for more info.
+
 - **`hashtags`** (list of str, optional, default: None)
   - An array of hashtag strings (e.g., `['#example', '#fun']`) to be added to the video description.
 
 - **`sound_name`** (str, optional, default: None)
   - The name of the TikTok sound that you want to use for the video. This sound will be applied during the upload.
+    
   - NOTE: please be specific with sound name (include sound creator name also if possible)
 
 - **`sound_aud_vol`** (str, optional, default: `'mix'`)
@@ -33,6 +39,7 @@ This document provides detailed information about the parameters and usage of th
     - `'mix'`: The TikTok sound and original audio will have a 50/50 split.
     - `'background'`: The original audio will be louder, and the TikTok sound will be faintly heard in the background.
     - `'main'`: The TikTok sound will be louder, and the original audio will be faintly heard in the background.
+      
   - Defaults to `'mix'` if invalid option chosen
 
 - **`schedule`** (str, optional, default: None)
@@ -40,6 +47,7 @@ This document provides detailed information about the parameters and usage of th
 
 - **`day`** (int, optional, default: None) (requires `schedule` != None)
   - If you want to schedule the video for a different day, this parameter specifies the day of the current month on which to upload the video. i.e: If current day is Sept 3rd, day=5 will upload video on Sept 5th
+    
   - NOTE: You will also need to specify time of upload in `schedule` parameter or else `day` won't work
 
     **Important**:
@@ -55,13 +63,15 @@ This document provides detailed information about the parameters and usage of th
 
 ## 🛠️ Initialization Info
 
-- **During FIRST RUN:** 
-
-  - You will be asked to log-in to TikTok, your cookies from your log-in will then be stored in a file `TK_cookes.json`. If you wish to change the account you want to post to, just delete the cookies file and you will be prompted to log in again.
+- **During FIRST RUN:**
 
   - Javascript dependencies will be automatically downloaded, once downloaded it will not attempt to download it again unless the files get deleted.
   
   - Runtime might be a 20-30 seconds longer than usual, this is due to libraries being built. Runtime should return to normal after first run
+
+- **When uploading to an account for the FIRST TIME:**
+
+  - You will be asked to log-in to TikTok, your cookies from your log-in will then be stored in a file called `TK_cookies_(youraccountname).json`. You will not need to log-in to that account again after that.
 
 
 ## 📝 Important Notes
@@ -95,12 +105,12 @@ This document provides detailed information about the parameters and usage of th
 ## 🕰️ Runtime:
 **Total runtime depends on your wifi connection and how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha's:** 8 - 15 secs (in RARE cases, it may take longer)
+- **Captcha's:** 3 - 10 secs (in RARE cases, it may take longer)
 - **Adding Sound:** 8 - 12 secs
-- **Scheduling:** 1 - 3 secs
-- **Copyright Check:** 2 - 7 secs
+- **Scheduling:** 5 - 8 secs
+- **Copyright Check:** 2 - 5 secs
 
-- All in all, runtime shouldn't exceed one minute in most cases.
+- All in all, runtime won't exceed one minute in most cases.
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
 
@@ -115,6 +125,7 @@ from autotiktokuploader import upload_tiktok
 upload_tiktok(
     video='path/to/your/video.mp4',
     description='Check out my latest video!',
+    accountname= 'mytiktokaccount',
     hashtags=['#fun', '#viral'],
     sound_name='popular_sound',
     sound_aud_vol='mix',
