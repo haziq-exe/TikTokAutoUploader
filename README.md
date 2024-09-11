@@ -22,6 +22,8 @@
 - **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library.
 - **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
 
+  ⭐️ If you like this project please feel free to star it, Thank you.
+
 ## 📦 Installation
 
 1. **Python Installation:** Install the package using `pip`:
@@ -121,4 +123,10 @@ Created by **Haziq**. Feel free to reach out at [haziqmk123@gmail.com](mailto:ha
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
-```
+
+## 📮 Related Projects
+
+If you liked this project please feel free to check out my use case showcase project that generates TikTok
+
+[TikTokGenerator](https://github.com/haziq-exe/TikTokGenerator)
+
