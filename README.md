@@ -22,7 +22,7 @@
 - **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library.
 - **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
 
-  ⭐️ If you like this project please feel free to star it, Thank you.
+⭐️ If you like this project please feel free to star it, Thank you.
 
 ## 📦 Installation
 
