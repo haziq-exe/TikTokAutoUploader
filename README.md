@@ -7,6 +7,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+CURRENTLY NOT OPERATIONAL WORKING ON FIX.
 
 <p align="center">
   <img src="READMEimage/READMEGIF.gif" alt="" width="900"/>
@@ -126,7 +127,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 
 ## 📮 Related Projects
 
-If you liked this project please check out my use case showcase project that generates TikTok
+If you liked this project please check out my use case showcase project that generates TikToks and uploads them using 'tiktokautouploader'
 
 [TikTokGenerator](https://github.com/haziq-exe/TikTokGenerator)
 
