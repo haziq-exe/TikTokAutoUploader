@@ -126,7 +126,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 
 ## 📮 Related Projects
 
-If you liked this project please feel free to check out my use case showcase project that generates TikTok
+If you liked this project please check out my use case showcase project that generates TikTok
 
 [TikTokGenerator](https://github.com/haziq-exe/TikTokGenerator)
 
