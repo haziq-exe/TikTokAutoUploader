@@ -7,8 +7,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-CURRENTLY NOT OPERATIONAL WORKING ON FIX.
-
 <p align="center">
   <img src="READMEimage/READMEGIF.gif" alt="" width="900"/>
 </p>
