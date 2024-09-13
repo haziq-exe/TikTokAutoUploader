@@ -106,7 +106,7 @@ This document provides detailed information about the parameters and usage of th
 **Total runtime depends on your wifi connection and how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
 
 - **Captcha's:** 3 - 10 secs (in RARE cases, it may take longer)
-- **Adding Sound:** 8 - 12 secs
+- **Adding Sound:** 3 - 5 secs
 - **Scheduling:** 5 - 8 secs
 - **Copyright Check:** 2 - 5 secs
 
