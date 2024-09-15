@@ -141,7 +141,8 @@ def download_image(image_url):
 
 def run_inference_on_image_tougher(image_path, object):
 
-    #rk <- Roboflow key
+    k = 'n|KIeDZnRZiJ};iVHz;R'
+    rk = ''.join(chr((ord(c) - 3) % 256) for c in k)
     
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -173,7 +174,8 @@ def run_inference_on_image_tougher(image_path, object):
 
 def run_inference_on_image(image_path):
 
-    #rk <- Roboflow key
+    k = 'n|KIeDZnRZiJ};iVHz;R'
+    rk = ''.join(chr((ord(c) - 3) % 256) for c in k)
 
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -240,6 +242,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     ------------------------------------------------------------------------------------------------------------------------------------------------c
     video (str) -> path to video to upload
     description (str) -> description for video
+    accountname (str) -> account to upload on
     hashtags (str)(array) -> hashtags for video
     sound_name (str) -> name of tik tok sound to use for video
     sound_aud_vol (str) -> volume of tik tok sound, 'main', 'mix' or 'background', check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
@@ -469,13 +472,16 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             print("Description and Hashtags added")
 
         try:
-            page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=12000000)  
+            page.wait_for_selector('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")[aria-disabled="false"]', timeout=12000000)
         except:
             sys.exit("ERROR: TIK TOK TOOK TOO LONG TO UPLOAD YOUR FILE (>20min). Try again, if issue persists then try a lower file size or different wifi connection")
 
         time.sleep(0.2)
         if suppressprint == False:
             print("Tik tok done loading file onto servers")
+        
+        if (schedule == None) and (day != None):
+            sys.exit("ERROR: CANT SCHEDULE FOR ANOTHER DAY USING 'day' WITHOUT ALSO INCLUDING TIME OF UPLOAD WITH 'schedule'; PLEASE ALSO INCLUDE TIME WITH 'schedule' PARAMETER")
 
         if schedule != None:
             try:
@@ -519,194 +525,258 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
 
             except:
                 sys.exit("SCHEDULING ERROR: VIDEO SAVED AS DRAFT")
-            
-        # if (schedule == None) and (day != None):
-        #     sys.exit("ERROR: CANT SCHEDULE FOR ANOTHER DAY USING 'day' WITHOUT ALSO INCLUDING TIME OF UPLOAD WITH 'schedule'; PLEASE ALSO INCLUDE TIME WITH 'schedule' PARAMETER")
 
-        # if(sound_name == None):
-        #     if copyrightcheck == True:
-        #         page.locator(".TUXSwitch-input").nth(0).click()
-        #         while copyrightcheck == True:
-        #             time.sleep(0.2)
-        #             if page.locator("span", has_text="No issues detected.").is_visible():
-        #                 if suppressprint == False:
-        #                     print("Copyright check complete")
-        #                 break
-        #             if page.locator("span", has_text="Copyright issues detected.").is_visible():
-        #                 sys.exit("COPYRIGHT CHECK FAILED: COPYRIGHT AUDIO DETECTED FROM TIKTOK")
-    
-        #     if schedule == None:
-        #         page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
-        #         uploaded = False
-        #         checks = 0
-        #         while uploaded == False:
-        #             if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-        #                 time.sleep(0.2)
-        #                 break
-        #             time.sleep(0.2)
-        #             checks += 1
-        #             if checks > 100:
-        #                 time.sleep(10)
-        #             if checks == 150:
-        #                 break
-        #     else:
-        #         page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
-        #         uploaded = False
-        #         checks = 0
-        #         while uploaded == False:
-        #             if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-        #                 time.sleep(0.2)
-        #                 break
-        #             time.sleep(0.2)
-        #             checks += 1
-        #             if checks > 100:
-        #                 time.sleep(10)
-        #             if checks == 150:
-        #                 break
-        #     if suppressprint == False:
-        #         print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
-        
-        #     page.close()
-
-        # else:
-        # try:
-        #     page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--secondary:has-text("Save draft")', timeout=10000)
-        # except:
-        #     sys.exit("SAVE AS DRAFT BUTTON NOT FOUND; CANNOT ADD SOUND WITHOUT ABILITY TO SAVE DRAFTS")
-        
-        # time.sleep(0.5)
-        # page.close()
-
-        # browser = p.chromium.launch(headless=False)
-
-        # context = browser.new_context()
-        # context.add_cookies(cookies)
-        # page = context.new_page()
-        # url2 = 'https://www.tiktok.com/tiktokstudio/content?tab=draft'
-
-        # while retries < 2:
-        #     try:
-        #         page.goto(url2, timeout=30000)
-        #     except:
-        #         retries +=1
-        #         time.sleep(5)
-        #         if retries == 2:
-        #             sys.exit("ERROR: TIK TOK PAGE FAILED TO LOAD, try again.")
-        #     else:
-        #         break
-        
-        # try:
-        #     page.wait_for_selector("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
-        #     page.click("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
-        #     page.wait_for_selector('div[data-contents="true"]')
-        #     page.wait_for_function("document.querySelector('.info-progress-num').textContent.trim() === '100%'", timeout=3000000)  
-        #     time.sleep(0.2)
-        # except:
-        #     sys.exit("ERROR ADDING SOUND: Video saved as draft")
-
+        sound_fail = False
         if sound_name != None:
-            page.click("div.TUXButton-label:has-text('Edit video')")
-            page.wait_for_selector("input.search-bar-input")
-            page.fill(f"input.search-bar-input", f"{sound_name}")
-            time.sleep(0.2)
-            page.click("div.TUXButton-label:has-text('Search')")
             try:
-                page.wait_for_selector('div.music-card-container')
-                page.click("div.music-card-container")
-                page.wait_for_selector("div.TUXButton-label:has-text('Use')")
-                page.click("div.TUXButton-label:has-text('Use')")
+                page.click("div.TUXButton-label:has-text('Edit video')")
             except:
-                sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
-            try:
-                page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
-                page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
-                time.sleep(0.5)
-                sliders = page.locator("input.scaleInput")
-
-                if sound_aud_vol == 'background':
-                    slider1 = sliders.nth(0)
-                    bounding_box1 = slider1.bounding_box()
-                    if bounding_box1:
-                        x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
-                        y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                        page.mouse.click(x1, y1)
-                
-                    slider2 = sliders.nth(1)
-                    bounding_box2 = slider2.bounding_box()
-                    if bounding_box2:
-                        x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
-                        y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                        page.mouse.click(x2, y2)
-
-                if sound_aud_vol == 'main':
-                    slider1 = sliders.nth(0)
-                    bounding_box1 = slider1.bounding_box()
-                    if bounding_box1:
-                        x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
-                        y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                        page.mouse.click(x1, y1)
-                    slider2 = sliders.nth(1)
-                    bounding_box2 = slider2.bounding_box()
-                    if bounding_box2:
-                        x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
-                        y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                        page.mouse.click(x2, y2)   
-            except:
-                sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
-
-            page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
-            page.click("div.TUXButton-label:has-text('Save edit')")
-            if suppressprint == False:
-                print("Added sound")
-            
-        page.wait_for_selector('div[data-contents="true"]')
-
-        if copyrightcheck == True:
-            page.locator(".TUXSwitch-input").nth(0).click()
-            while copyrightcheck == True:
+                sound_fail = True
+            if sound_fail == False:
+                page.wait_for_selector("input.search-bar-input")
+                page.fill(f"input.search-bar-input", f"{sound_name}")
                 time.sleep(0.2)
-                if page.locator("span", has_text="No issues detected.").is_visible():
-                    if suppressprint == False:
-                        print("Copyright check complete")
+                page.click("div.TUXButton-label:has-text('Search')")
+                try:
+                    page.wait_for_selector('div.music-card-container')
+                    page.click("div.music-card-container")
+                    page.wait_for_selector("div.TUXButton-label:has-text('Use')")
+                    page.click("div.TUXButton-label:has-text('Use')")
+                except:
+                    sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
+                try:
+                    page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                    page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                    time.sleep(0.5)
+                    sliders = page.locator("input.scaleInput")
+
+                    if sound_aud_vol == 'background':
+                        slider1 = sliders.nth(0)
+                        bounding_box1 = slider1.bounding_box()
+                        if bounding_box1:
+                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
+                            y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                            page.mouse.click(x1, y1)
+                    
+                        slider2 = sliders.nth(1)
+                        bounding_box2 = slider2.bounding_box()
+                        if bounding_box2:
+                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
+                            y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                            page.mouse.click(x2, y2)
+
+                    if sound_aud_vol == 'main':
+                        slider1 = sliders.nth(0)
+                        bounding_box1 = slider1.bounding_box()
+                        if bounding_box1:
+                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
+                            y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                            page.mouse.click(x1, y1)
+                        slider2 = sliders.nth(1)
+                        bounding_box2 = slider2.bounding_box()
+                        if bounding_box2:
+                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
+                            y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                            page.mouse.click(x2, y2)   
+                except:
+                    sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
+
+                page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
+                page.click("div.TUXButton-label:has-text('Save edit')")
+                if suppressprint == False:
+                    print("Added sound")
+        
+        if sound_fail == False:
+            page.wait_for_selector('div[data-contents="true"]')
+
+            if copyrightcheck == True:
+                page.click('div.TUXSwitch:has(label.TUXSwitch-label:has-text("Run a copyright check")) input.TUXSwitch-input')
+                while copyrightcheck == True:
+                    time.sleep(0.2)
+                    if page.locator("span", has_text="No issues detected.").is_visible():
+                        if suppressprint == False:
+                            print("Copyright check complete")
+                        break
+                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                        sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
+            
+
+            try:
+                if schedule == None:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
+                        time.sleep(0.2)
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                else:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
+                        time.sleep(0.2)
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                if suppressprint == False:
+                    print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
+            except:
+                time.sleep(5)
+                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+            time.sleep(1)
+
+            page.close()
+        else:
+            try:
+                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--secondary:has-text("Save draft")', timeout=10000)
+            except:
+                sys.exit("SAVE AS DRAFT BUTTON NOT FOUND; Please try account that has ability to save as draft")
+            
+            time.sleep(0.5)
+            page.close()
+
+            browser = p.chromium.launch(headless=True)
+
+            context = browser.new_context()
+            context.add_cookies(cookies)
+            page = context.new_page()
+            url2 = 'https://www.tiktok.com/tiktokstudio/content?tab=draft'
+
+            while retries < 2:
+                try:
+                    page.goto(url2, timeout=30000)
+                except:
+                    retries +=1
+                    time.sleep(5)
+                    if retries == 2:
+                        sys.exit("ERROR: TIK TOK PAGE FAILED TO LOAD, try again.")
+                else:
                     break
-                if page.locator("span", has_text="Copyright issues detected.").is_visible():
-                    sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
+            
+            try:
+                page.wait_for_selector("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
+                page.click("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
+                page.wait_for_selector('div[data-contents="true"]')
+                time.sleep(0.2)
+            except:
+                sys.exit("ERROR ADDING SOUND: Video saved as draft")
+            
+            if sound_name != None:
+                    page.click("div.TUXButton-label:has-text('Edit video')")
+                    page.wait_for_selector("input.search-bar-input")
+                    page.fill(f"input.search-bar-input", f"{sound_name}")
+                    time.sleep(0.2)
+                    page.click("div.TUXButton-label:has-text('Search')")
+                    try:
+                        page.wait_for_selector('div.music-card-container')
+                        page.click("div.music-card-container")
+                        page.wait_for_selector("div.TUXButton-label:has-text('Use')")
+                        page.click("div.TUXButton-label:has-text('Use')")
+                    except:
+                        sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
+                    try:
+                        page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                        page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                        time.sleep(0.5)
+                        sliders = page.locator("input.scaleInput")
+
+                        if sound_aud_vol == 'background':
+                            slider1 = sliders.nth(0)
+                            bounding_box1 = slider1.bounding_box()
+                            if bounding_box1:
+                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
+                                y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                                page.mouse.click(x1, y1)
+                        
+                            slider2 = sliders.nth(1)
+                            bounding_box2 = slider2.bounding_box()
+                            if bounding_box2:
+                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
+                                y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                                page.mouse.click(x2, y2)
+
+                        if sound_aud_vol == 'main':
+                            slider1 = sliders.nth(0)
+                            bounding_box1 = slider1.bounding_box()
+                            if bounding_box1:
+                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
+                                y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                                page.mouse.click(x1, y1)
+                            slider2 = sliders.nth(1)
+                            bounding_box2 = slider2.bounding_box()
+                            if bounding_box2:
+                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
+                                y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                                page.mouse.click(x2, y2)   
+                    except:
+                        sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
+
+                    page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
+                    page.click("div.TUXButton-label:has-text('Save edit')")
+                    if suppressprint == False:
+                        print("Added sound")
         
 
-        try:
-            if schedule == None:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                        time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            else:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
-                uploaded = False
-                checks = 0
-                while uploaded == False:
-                    if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                        time.sleep(0.2)
-                        break
-                    time.sleep(0.2)
-                    checks += 1
-                    if checks > 100:
-                        time.sleep(10)
-                    if checks == 150:
-                        break
-            if suppressprint == False:
-                print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
-        except:
-            time.sleep(5)
-            sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
-        time.sleep(1)
+            page.wait_for_selector('div[data-contents="true"]')
 
-        page.close()
+            if copyrightcheck == True:
+                page.click('div.TUXSwitch:has(label.TUXSwitch-label:has-text("Run a copyright check")) input.TUXSwitch-input')
+                while copyrightcheck == True:
+                    time.sleep(0.2)
+                    if page.locator("span", has_text="No issues detected.").is_visible():
+                        if suppressprint == False:
+                            print("Copyright check complete")
+                        break
+                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                        sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
+            
+
+            try:
+                if schedule == None:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
+                        time.sleep(0.2)
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                else:
+                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                    uploaded = False
+                    checks = 0
+                    while uploaded == False:
+                        if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
+                            time.sleep(0.2)
+                            break
+                        time.sleep(0.2)
+                        checks += 1
+                        if checks > 100:
+                            time.sleep(10)
+                        if checks == 150:
+                            break
+                if suppressprint == False:
+                    print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
+            except:
+                time.sleep(5)
+                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+            time.sleep(1)
+
+            page.close()
