@@ -141,8 +141,7 @@ def download_image(image_url):
 
 def run_inference_on_image_tougher(image_path, object):
 
-    k = 'n|KIeDZnRZiJ};iVHz;R'
-    rk = ''.join(chr((ord(c) - 3) % 256) for c in k)
+    #rk <- Roboflow key
     
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -174,8 +173,7 @@ def run_inference_on_image_tougher(image_path, object):
 
 def run_inference_on_image(image_path):
 
-    k = 'n|KIeDZnRZiJ};iVHz;R'
-    rk = ''.join(chr((ord(c) - 3) % 256) for c in k)
+    #rk <- Roboflow key
 
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
