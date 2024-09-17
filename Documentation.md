@@ -60,6 +60,9 @@ This document provides detailed information about the parameters and usage of th
 - **`suppressprint`** (bool, optional, default: `False`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
+- **`headless`** (int, optional, default: True)
+  - Runs the code in headless mode, when set to `False` you can see the code execute in the browser, recommended to set this to `False` if code is not working as intended in order to more clearly see what the issue exactly is
+
 
 ## 🛠️ Initialization Info
 
@@ -78,7 +81,7 @@ This document provides detailed information about the parameters and usage of th
 
 - **VERY IMPORTANT: TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
-  - If you want to upload your video with TikTok sounds, your TikTok account MUST have the ability to save drafts; otherwise, you can just upload/schedule the video with copyright checks and trending hashtags.
+  - If you want to upload your video with TikTok sounds, your TikTok account having the ability to save drafts is usually needed (not always)
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 10 days in advance.
