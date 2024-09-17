@@ -110,7 +110,6 @@ This library requires the following dependencies:
 - `playwright`
 - `requests`
 - `Pillow`
-- `scikit-learn`
 - `inference`
 
 These will be automatically installed when you install the package.
