@@ -99,9 +99,9 @@ This document provides detailed information about the parameters and usage of th
 </p>
 
 #### Note: 
-- These GIFs are just to showcase the project's ability to auto-solve captcha's, this entire process will take place 'under the hood', you will not see the captcha being solved.
+- These GIFs are just to showcase the project's ability to auto-solve captcha's, this entire process will take place 'under the hood' (unless headless mode is set to `False`).
 
-- As far as I'm aware these captchas are the only types of captchas that you may encounter when trying to upload TikTok's, if you do encounter a different captcha, I highly encourage you to email me and let me know and I will try to increase the capabilities of this project to include those captcha's as well.
+- As far as I'm aware these captchas are the only types of captchas that you may encounter when trying to upload TikTok's, if you do encounter a different captcha, feel free to email me and let me know and I will try to increase the capabilities of this project to include those captcha's as well.
 
 - To check what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
@@ -115,7 +115,7 @@ This document provides detailed information about the parameters and usage of th
 
 - All in all, runtime won't exceed one minute in most cases.
 
-- **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as libraries are being built
+- **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as JS libraries are being built
 
 
 ## Example Usage
