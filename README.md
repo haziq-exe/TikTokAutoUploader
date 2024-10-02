@@ -50,8 +50,6 @@ pip install tiktokautouploader
     python -m playwright install
     ```
 
-**NOTE:** If you want to add sounds to your TikTok, you MUST have the ability to save drafts. If you don't want to add sounds then you don't need this feature.
-
 
 ## 📝 Quick-Start
 
