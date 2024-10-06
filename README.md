@@ -92,7 +92,7 @@ PLEASE READ DOCUMENTATION FOR MORE INFO
 upload_tiktok(video=video_path, description=description, accountname=accountname, hashtags=hashtags, copyrightcheck=True)
 ```
 
-## 🎯 Why Choose `autotiktokuploader`?
+## 🎯 Why Choose `tiktokautouploader`?
 
 - **No more captchas:** Fully automated uploads without interruptions, If captchas do show up, no worries, they will be solved. (read documentation for more info)
 - **Maximize your reach:** Add popular sounds and effective hashtags that work to boost visibility and go viral!
