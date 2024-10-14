@@ -119,10 +119,3 @@ Created by **Haziq**. Feel free to reach out at [haziqmk123@gmail.com](mailto:ha
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
-
-## 📮 Related Projects
-
-If you liked this project check out my use case showcase project that generates TikToks and uploads them using 'tiktokautouploader'
-
-[TikTokGenerator](https://github.com/haziq-exe/TikTokGenerator)
-
