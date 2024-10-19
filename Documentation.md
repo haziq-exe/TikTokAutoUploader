@@ -1,6 +1,6 @@
 # autotiktokuploader Documentation
 
-This document provides detailed information about the parameters and usage of the `upload_tiktok` function in the **AutoTikTokUploader** library. The function is designed to automate the process of uploading or scheduling videos to TikTok with additional features such as adding TikTok sounds, hashtags, and conducting copyright checks.
+This document provides detailed information about the parameters and usage of the `upload_tiktok` function in the **tiktokautouploader** library. The function is designed to automate the process of uploading or scheduling videos to TikTok with additional features such as adding TikTok sounds, hashtags, and conducting copyright checks.
 
 ### ❗ Key Sections:
 
