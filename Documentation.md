@@ -79,9 +79,10 @@ This document provides detailed information about the parameters and usage of th
 
 ## 📝 Important Notes
 
-- **VERY IMPORTANT: TikTok Account Recommendations**:
+**VERY IMPORTANT: Use this tool at your own risk, as automated uploading may violate TikTok's Terms of Service** 
+
+- **TikTok Account Recommendations**:
   - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
-  - If you want to upload your video with TikTok sounds, your TikTok account having the ability to save drafts is usually needed (not always)
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 10 days in advance.
