@@ -51,7 +51,7 @@ This document provides detailed information about the parameters and usage of th
   - NOTE: You will also need to specify time of upload in `schedule` parameter or else `day` won't work
 
     **Important**:
-    - You can only schedule a maximum of 10 days in advance.
+    - You can only schedule a maximum of 240 hours (10 days) in advance.
     - If scheduling for the next month, you can only schedule within the first 5 days of the next month (as long as they are also within 10 days of the current date). i.e: If current day is Sept 30th, day=5 will upload on Oct 5th, 6 WILL NOT WORK.
 
 - **`copyrightcheck`** (bool, optional, default: `False`)
@@ -85,8 +85,8 @@ This document provides detailed information about the parameters and usage of th
   - It is recommended to have a TikTok account with at least a few weeks of history built up for the best results.
 
 - **Scheduling Limitations**:
-  - The function allows scheduling up to 10 days in advance.
-  - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are within 10 days from the current date).
+  - The function allows scheduling up to 240 hours (10 days) in advance.
+  - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are also within 10 days from the current date).
 
 ## ⛔ Supported Captchas:
 
@@ -107,11 +107,11 @@ This document provides detailed information about the parameters and usage of th
 - To check what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
 ## 🕰️ Runtime:
-**Total runtime depends on your wifi connection and how long TikTok takes to upload your video to their servers, however, here are approximations on how much runtime is added by each parameter**
+**Total runtime mostly depends on your WIFI connection, however, here are approximations on how much runtime is added by each parameter**
 
 - **Captcha's:** 3 - 10 secs (in RARE cases, it may take longer)
 - **Adding Sound:** 3 - 5 secs
-- **Scheduling:** 5 - 8 secs
+- **Scheduling:** 2 - 5 secs
 - **Copyright Check:** 2 - 5 secs
 
 - All in all, runtime won't exceed one minute in most cases.
