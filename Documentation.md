@@ -124,7 +124,7 @@ This document provides detailed information about the parameters and usage of th
 Here’s a basic example of how to use the `upload_tiktok` function:
 
 ```python
-from autotiktokuploader import upload_tiktok
+from tiktokautouploader import upload_tiktok
 
 upload_tiktok(
     video='path/to/your/video.mp4',
