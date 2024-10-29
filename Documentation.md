@@ -114,7 +114,7 @@ This document provides detailed information about the parameters and usage of th
 - **Scheduling:** 2 - 5 secs
 - **Copyright Check:** 2 - 5 secs
 
-- All in all, runtime won't exceed one minute in most cases.
+- All in all, runtime won't exceed 30 seconds in most cases.
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as JS libraries are being built
 
