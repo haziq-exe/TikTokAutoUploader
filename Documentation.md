@@ -52,7 +52,7 @@ This document provides detailed information about the parameters and usage of th
 
     **Important**:
     - You can only schedule a maximum of 240 hours (10 days) in advance.
-    - If scheduling for the next month, you can only schedule within the first 5 days of the next month (as long as they are also within 10 days of the current date). i.e: If current day is Sept 30th, day=5 will upload on Oct 5th, 6 WILL NOT WORK.
+    - If scheduling for the next month, you can only schedule within the first 2 days of the next month (as long as they are also within 10 days of the current date). i.e: If current day is Sept 30th, day=2 will upload on Oct 2nd, 4 WILL NOT WORK.
 
 - **`copyrightcheck`** (bool, optional, default: `False`)
   - If set to `True`, the function will conduct a copyright check on TikTok before uploading. If the check fails, the code execution will stop.
@@ -86,7 +86,7 @@ This document provides detailed information about the parameters and usage of th
 
 - **Scheduling Limitations**:
   - The function allows scheduling up to 240 hours (10 days) in advance.
-  - If you need to schedule a video for the next month, the video can only be uploaded within the first 5 days of that month (as long as these days are also within 10 days from the current date).
+  - If you need to schedule a video for the next month, the video can only be uploaded within the first 2 days of that month (as long as these days are also within 10 days from the current date).
 
 ## ⛔ Supported Captchas:
 
