@@ -54,11 +54,14 @@ def run_javascript():
 def install_js_dependencies():
     js_dir = pkg_resources.resource_filename(__name__, 'Js_assets')
     node_modules_path = os.path.join(js_dir, 'node_modules')
-    
+
     if not os.path.exists(node_modules_path):
         print("JavaScript dependencies not found. Installing...")
-        subprocess.run(['npm', 'install', 'playwright', 'playwright-extra', 'puppeteer-extra-plugin-stealth', '--silent'], cwd=js_dir, check=True)
-        subprocess.run(['npx', 'playwright', 'install', 'chromium'], cwd=js_dir, check=True)
+        try:
+            subprocess.run(['npm', 'install', '--silent'], cwd=js_dir, check=True)
+        except subprocess.CalledProcessError as e:
+            print("An error occurred during npm installation.")
+            print(f"Error details: {e}")
     else:
         time.sleep(0.1)
 
@@ -233,7 +236,7 @@ def click_on_objects(page, object_coords):
 
 
 
-def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False):
+def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False, headless=True, stealth=False):
 
     """
     UPLOADS VIDEO TO TIKTOK
@@ -248,6 +251,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     day (int) -> day to schedule video for, check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
     copyrightcheck (bool) -> include copyright check or not; CODE FAILS IF FAIL COPYRIGHT CHECK
     suppressprint (bool) -> True means function doesnt print anything to provide updates on progress
+    headless (bool) -> run in headless mode or not
+    stealth (bool) -> will wait second(s) before each operation
     --------------------------------------------------------------------------------------------------------------------------------------------
     """
     try:
@@ -283,8 +288,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
  
     with sync_playwright() as p:
         
-        browser = p.firefox.launch(headless=True)
-
+        browser = p.firefox.launch(headless=headless)
         context = browser.new_context()
         context.add_cookies(cookies)
         page = context.new_page()
@@ -428,7 +432,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
         page.wait_for_selector('div[data-contents="true"]')
         page.click('div[data-contents="true"]')
         if suppressprint == False:
-            print("done inputting File, waiting for tiktok to load onto their server, this may take a couple of minutes, depending on your video length")
+            print("Entered File, waiting for tiktok to load onto their server, this may take a couple of minutes, depending on your video length")
         time.sleep(0.5)
         if description == None:
             sys.exit("ERROR: PLEASE INCLUDE A DESCRIPTION")
@@ -452,6 +456,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                 page.keyboard.type(hashtag)
                 time.sleep(0.5)
                 try:
+                    if stealth == True:
+                        time.sleep(2)
                     page.click(f'span.hash-tag-topic:has-text("{hashtag}")', timeout=1000)
                 except:
                     try:
@@ -470,7 +476,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             print("Description and Hashtags added")
 
         try:
-            page.wait_for_selector('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")[aria-disabled="false"]', timeout=12000000)
+            page.wait_for_selector('button:has-text("Post")[aria-disabled="false"]', timeout=12000000)
         except:
             sys.exit("ERROR: TIK TOK TOOK TOO LONG TO UPLOAD YOUR FILE (>20min). Try again, if issue persists then try a lower file size or different wifi connection")
 
@@ -491,31 +497,50 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             except:
                 sys.exit("SCHEDULE TIME ERROR: PLEASE MAKE SURE YOUR SCHEDULE TIME IS A STRING THAT FOLLOWS THE 24H FORMAT 'HH:MM', VIDEO SAVED AS DRAFT")
 
-            page.locator('div.TUXRadioStandalone.TUXRadioStandalone--medium').nth(1).click()
-            time.sleep(1)
-            if page.locator('button.TUXButton.TUXButton--default.TUXButton--medium.TUXButton--primary:has-text("Allow")').nth(0).is_visible():
-                page.locator('button.TUXButton.TUXButton--default.TUXButton--medium.TUXButton--primary:has-text("Allow")').nth(0).click()
-                time.sleep(0.2)
-            else:
-                if page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(1).is_visible():
-                    time.sleep(0.2)
+            page.locator('label:has-text("Schedule")').click()
+            if stealth==True:
+                time.sleep(2)
+            visible = False
+            while visible == False:
+                if page.locator('button:has-text("Allow")').nth(0).is_visible():
+                    if stealth == True:
+                        time.sleep(1)
+                    page.locator('button:has-text("Allow")').nth(0).click()
+                    visible = True
+                    time.sleep(0.1)
+                else:
+                    if page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(1).is_visible():
+                        visible = True
+                        time.sleep(0.1)
             if day != None:
-                page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(1).click()
+                if stealth==True:
+                    time.sleep(1)
+                page.locator('div.TUXTextInputCore-leadingIconWrapper:has(svg > path[d="M15 3a1 1 0 0 0-1 1v3h-1.4c-3.36 0-5.04 0-6.32.65a6 6 0 0 0-2.63 2.63C3 11.56 3 13.24 3 16.6v16.8c0 3.36 0 5.04.65 6.32a6 6 0 0 0 2.63 2.63c1.28.65 2.96.65 6.32.65h22.8c3.36 0 5.04 0 6.32-.65a6 6 0 0 0 2.63-2.63c.65-1.28.65-2.96.65-6.32V16.6c0-3.36 0-5.04-.65-6.32a6 6 0 0 0-2.63-2.63C40.44 7 38.76 7 35.4 7H34V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3H18V4a1 1 0 0 0-1-1h-2Zm-2.4 8H14v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h12v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h1.4c1.75 0 2.82 0 3.62.07a5.11 5.11 0 0 1 .86.14h.03a2 2 0 0 1 .88.91 5.11 5.11 0 0 1 .14.86c.07.8.07 1.87.07 3.62v1.9H7v-1.9c0-1.75 0-2.82.07-3.62a5.12 5.12 0 0 1 .14-.86v-.03a2 2 0 0 1 .88-.87l.03-.01a5.11 5.11 0 0 1 .86-.14c.8-.07 1.87-.07 3.62-.07ZM7 22.5h34v10.9c0 1.75 0 2.82-.07 3.62a5.11 5.11 0 0 1-.14.86v.03a2 2 0 0 1-.88.87l-.03.01a5.11 5.11 0 0 1-.86.14c-.8.07-1.87.07-3.62.07H12.6c-1.75 0-2.82 0-3.62-.07a5.11 5.11 0 0 1-.89-.15 2 2 0 0 1-.87-.87l-.01-.03a5.12 5.12 0 0 1-.14-.86C7 36.22 7 35.15 7 33.4V22.5Z"])').click()
                 time.sleep(0.2)
                 try:
-                    page.locator(f'span.day.valid:has-text("{day}")').click()
+                    if stealth==True:
+                        time.sleep(1)
+                    page.locator(f'span.day.valid:text-is("{day}")').click()
                 except:
                     sys.exit("SCHEDULE DAY ERROR: ERROR WITH SCHEDULED DAY, read documentation for more information on format of day")
             try:
-                time.sleep(1)
-                page.locator('div.TUXTextInputCore-trailingIconWrapper').nth(0).click()
                 time.sleep(0.2)
-                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-right:has-text("{minute}")').nth(0).scroll_into_view_if_needed()
+                page.locator('div.TUXTextInputCore-leadingIconWrapper:has(svg > path[d="M24 2a22 22 0 1 0 0 44 22 22 0 0 0 0-44ZM6 24a18 18 0 1 1 36 0 18 18 0 0 1-36 0Z"])').click()
                 time.sleep(0.2)
-                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-right:has-text("{minute}")').nth(0).click()
+                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-right:text-is("{minute}")').scroll_into_view_if_needed()
                 time.sleep(0.2)
-                page.locator(f'.tiktok-timepicker-option-text:has-text("{hour}")').nth(0).scroll_into_view_if_needed()
-                page.locator(f'.tiktok-timepicker-option-text:has-text("{hour}")').nth(0).click()
+                if stealth==True:
+                    time.sleep(2)
+                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-right:text-is("{minute}")').click()
+                time.sleep(0.2)
+                if page.locator("div.tiktok-timepicker-time-picker-container").is_visible():
+                    time.sleep(0.1)
+                else:
+                    page.locator('div.TUXTextInputCore-leadingIconWrapper:has(svg > path[d="M24 2a22 22 0 1 0 0 44 22 22 0 0 0 0-44ZM6 24a18 18 0 1 1 36 0 18 18 0 0 1-36 0Z"])').click()
+                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-left:text-is("{hour}")').scroll_into_view_if_needed()
+                if stealth == True:
+                        time.sleep(2)
+                page.locator(f'.tiktok-timepicker-option-text.tiktok-timepicker-left:text-is("{hour}")').click()
                 time.sleep(1)
 
                 if suppressprint == False:
@@ -527,6 +552,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
         sound_fail = False
         if sound_name != None:
             try:
+                if stealth == True:
+                        time.sleep(2)
                 page.click("div.TUXButton-label:has-text('Edit video')")
             except:
                 sound_fail = True
@@ -534,16 +561,24 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                 page.wait_for_selector("input.search-bar-input")
                 page.fill(f"input.search-bar-input", f"{sound_name}")
                 time.sleep(0.2)
+                if stealth == True:
+                        time.sleep(2)
                 page.click("div.TUXButton-label:has-text('Search')")
                 try:
                     page.wait_for_selector('div.music-card-container')
+                    if stealth == True:
+                        time.sleep(0.5)
                     page.click("div.music-card-container")
                     page.wait_for_selector("div.TUXButton-label:has-text('Use')")
+                    if stealth == True:
+                        time.sleep(1)
                     page.click("div.TUXButton-label:has-text('Use')")
                 except:
                     sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
                 try:
                     page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                    if stealth == True:
+                        time.sleep(1)
                     page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
                     time.sleep(0.5)
                     sliders = page.locator("input.scaleInput")
@@ -554,6 +589,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         if bounding_box1:
                             x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
                             y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                            if stealth == True:
+                                time.sleep(1)
                             page.mouse.click(x1, y1)
                     
                         slider2 = sliders.nth(1)
@@ -561,6 +598,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         if bounding_box2:
                             x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
                             y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                            if stealth == True:
+                                time.sleep(1)
                             page.mouse.click(x2, y2)
 
                     if sound_aud_vol == 'main':
@@ -569,17 +608,23 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         if bounding_box1:
                             x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
                             y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                            if stealth == True:
+                                time.sleep(1)
                             page.mouse.click(x1, y1)
                         slider2 = sliders.nth(1)
                         bounding_box2 = slider2.bounding_box()
                         if bounding_box2:
                             x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
                             y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                            if stealth == True:
+                                time.sleep(1)
                             page.mouse.click(x2, y2)   
                 except:
                     sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
 
                 page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
+                if stealth == True:
+                        time.sleep(1)
                 page.click("div.TUXButton-label:has-text('Save edit')")
                 if suppressprint == False:
                     print("Added sound")
@@ -588,10 +633,12 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             page.wait_for_selector('div[data-contents="true"]')
 
             if copyrightcheck == True:
-                page.click('div.TUXSwitch:has(label.TUXSwitch-label:has-text("Run a copyright check")) input.TUXSwitch-input')
+                if stealth == True:
+                        time.sleep(1)
+                page.locator('div[data-e2e="copyright_container"] span[data-part="thumb"]').click()
                 while copyrightcheck == True:
                     time.sleep(0.2)
-                    if page.locator("span", has_text="No issues detected.").is_visible():
+                    if page.locator("span" ,has_text="No issues detected.").is_visible():
                         if suppressprint == False:
                             print("Copyright check complete")
                         break
@@ -601,21 +648,23 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
 
             try:
                 if schedule == None:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                    if stealth == True:
+                        time.sleep(1)
+                    page.click('button:has-text("Post")', timeout=10000)
                     uploaded = False
                     checks = 0
                     while uploaded == False:
                         if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                            time.sleep(0.2)
+                            time.sleep(0.1)
                             break
                         time.sleep(0.2)
                         checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
+                        if checks == 25:
                             break
                 else:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                    if stealth == True:
+                        time.sleep(1)
+                    page.click('button:has-text("Schedule")', timeout=10000)
                     uploaded = False
                     checks = 0
                     while uploaded == False:
@@ -624,28 +673,28 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             break
                         time.sleep(0.2)
                         checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
+                        if checks == 25:
                             break
                 if suppressprint == False:
                     print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
             except:
-                time.sleep(5)
-                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+                time.sleep(2)
+                sys.exit("POSSIBLE ERROR UPLOADING: Cannot confirm if uploaded successfully, Please check account in a minute or two to confirm.")
             time.sleep(1)
 
             page.close()
         else:
             try:
-                page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--secondary:has-text("Save draft")', timeout=10000)
+                if stealth == True:
+                        time.sleep(1)
+                page.click('button:has-text("Save draft")', timeout=10000)
             except:
                 sys.exit("SAVE AS DRAFT BUTTON NOT FOUND; Please try account that has ability to save as draft")
             
             time.sleep(0.5)
             page.close()
 
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=headless)
 
             context = browser.new_context()
             context.add_cookies(cookies)
@@ -665,6 +714,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             
             try:
                 page.wait_for_selector("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
+                if stealth == True:
+                        time.sleep(1)
                 page.click("path[d='M37.37 4.85a4.01 4.01 0 0 0-.99-.79 3 3 0 0 0-2.72 0c-.45.23-.81.6-1 .79a9 9 0 0 1-.04.05l-19.3 19.3c-1.64 1.63-2.53 2.52-3.35 3.47a36 36 0 0 0-4.32 6.16c-.6 1.1-1.14 2.24-2.11 4.33l-.3.6c-.4.75-.84 1.61-.8 2.43a2.5 2.5 0 0 0 2.37 2.36c.82.05 1.68-.4 2.44-.79l.59-.3c2.09-.97 3.23-1.5 4.33-2.11a36 36 0 0 0 6.16-4.32c.95-.82 1.84-1.71 3.47-3.34l19.3-19.3.05-.06a3 3 0 0 0 .78-3.71c-.22-.45-.6-.81-.78-1l-.02-.02-.03-.03-3.67-3.67a8.7 8.7 0 0 1-.06-.05ZM16.2 26.97 35.02 8.15l2.83 2.83L19.03 29.8c-1.7 1.7-2.5 2.5-3.33 3.21a32 32 0 0 1-7.65 4.93 32 32 0 0 1 4.93-7.65c.73-.82 1.51-1.61 3.22-3.32Z']")
                 page.wait_for_selector('div[data-contents="true"]')
                 time.sleep(0.2)
@@ -672,20 +723,30 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                 sys.exit("ERROR ADDING SOUND: Video saved as draft")
             
             if sound_name != None:
+                    if stealth == True:
+                        time.sleep(1)
                     page.click("div.TUXButton-label:has-text('Edit video')")
                     page.wait_for_selector("input.search-bar-input")
                     page.fill(f"input.search-bar-input", f"{sound_name}")
                     time.sleep(0.2)
+                    if stealth == True:
+                        time.sleep(1)
                     page.click("div.TUXButton-label:has-text('Search')")
                     try:
                         page.wait_for_selector('div.music-card-container')
+                        if stealth == True:
+                            time.sleep(1)
                         page.click("div.music-card-container")
                         page.wait_for_selector("div.TUXButton-label:has-text('Use')")
+                        if stealth == True:
+                            time.sleep(1)
                         page.click("div.TUXButton-label:has-text('Use')")
                     except:
                         sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
                     try:
                         page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                        if stealth == True:
+                            time.sleep(1)
                         page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
                         time.sleep(0.5)
                         sliders = page.locator("input.scaleInput")
@@ -696,6 +757,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             if bounding_box1:
                                 x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
                                 y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
                                 page.mouse.click(x1, y1)
                         
                             slider2 = sliders.nth(1)
@@ -703,6 +766,8 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             if bounding_box2:
                                 x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
                                 y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
                                 page.mouse.click(x2, y2)
 
                         if sound_aud_vol == 'main':
@@ -711,17 +776,23 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             if bounding_box1:
                                 x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
                                 y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
                                 page.mouse.click(x1, y1)
                             slider2 = sliders.nth(1)
                             bounding_box2 = slider2.bounding_box()
                             if bounding_box2:
                                 x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
                                 y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
                                 page.mouse.click(x2, y2)   
                     except:
                         sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
 
                     page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
+                    if stealth == True:
+                        time.sleep(1)
                     page.click("div.TUXButton-label:has-text('Save edit')")
                     if suppressprint == False:
                         print("Added sound")
@@ -730,20 +801,24 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             page.wait_for_selector('div[data-contents="true"]')
 
             if copyrightcheck == True:
-                page.click('div.TUXSwitch:has(label.TUXSwitch-label:has-text("Run a copyright check")) input.TUXSwitch-input')
+                if stealth == True:
+                        time.sleep(1)
+                page.locator('div[data-e2e="copyright_container"] span[data-part="thumb"]').click()
                 while copyrightcheck == True:
                     time.sleep(0.2)
                     if page.locator("span", has_text="No issues detected.").is_visible():
                         if suppressprint == False:
                             print("Copyright check complete")
                         break
-                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                    if page.locator('span', has_text="Copyright issues detected.").is_visible():
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
             
 
             try:
                 if schedule == None:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Post")', timeout=10000)
+                    if stealth == True:
+                        time.sleep(1)
+                    page.click('button:has-text("Post")', timeout=10000)
                     uploaded = False
                     checks = 0
                     while uploaded == False:
@@ -752,29 +827,29 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             break
                         time.sleep(0.2)
                         checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
+                        if checks == 25:
                             break
                 else:
-                    page.click('button.TUXButton.TUXButton--default.TUXButton--large.TUXButton--primary:has-text("Schedule")', timeout=10000)
+                    if stealth == True:
+                        time.sleep(1)
+                    page.click('button:has-text("Schedule")', timeout=10000)
                     uploaded = False
                     checks = 0
                     while uploaded == False:
                         if page.locator(':has-text("Leaving the page does not interrupt")').nth(0).is_visible():
-                            time.sleep(0.2)
+                            time.sleep(0.1)
                             break
                         time.sleep(0.2)
                         checks += 1
-                        if checks > 100:
-                            time.sleep(10)
-                        if checks == 150:
+                        if checks == 25:
                             break
                 if suppressprint == False:
                     print("Done uploading video, NOTE: it may take a minute or two to show on TikTok")
             except:
-                time.sleep(5)
-                sys.exit("ERROR UPLOADING: VIDEO HAS SAVED AS DRAFT BUT CANT UPLOAD")
+                time.sleep(2)
+                sys.exit("POSSIBLE ERROR UPLOADING: Cannot confirm if uploaded successfully, Please check account in a minute or two to confirm.")
             time.sleep(1)
 
             page.close()
+    
+    return "Completed"
