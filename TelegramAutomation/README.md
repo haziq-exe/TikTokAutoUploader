@@ -53,10 +53,6 @@ The `Fancy_Upload.py` script provides the following functionalities:
 - **Customization Required:** Some configurations, such as folder paths and Telegram bot credentials, need to be updated in the script to match your setup.
 - **Community Contribution:** This script was contributed by a community member (t3k-vtx) and is provided as-is. For issues or suggestions, please raise an issue in the repository.
 
-## License
-
-This script follows the same licensing terms as the repository unless otherwise stated.
-
 ## Contact
 
 For further assistance, feel free to reach out via the repository's Issues section or contact t3k-vtx directly.
