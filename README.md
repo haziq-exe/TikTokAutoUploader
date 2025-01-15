@@ -93,15 +93,6 @@ PLEASE READ DOCUMENTATION FOR MORE INFO
 upload_tiktok(video=video_path, description=description, accountname=accountname, hashtags=hashtags, copyrightcheck=True)
 ```
 
-## 🎯 Why Choose `tiktokautouploader`?
-
-- **No more captchas:** Fully automated uploads without interruptions, If captchas do show up, no worries, they will be solved. (read documentation for more info)
-- **Maximize your reach:** Add popular sounds and effective hashtags that work to boost visibility and go viral!
-- **Stay compliant:** Built-in copyright checks to avoid unforeseen takedowns.
-- **Convenient scheduling:** Post at the right time, even when you're away!
-- **Much faster than manually uploading:** Drastically reduce the time you need to upload videos, just click one button and be done much quicker!
-- **Upload to different account:** Stay on top of all your TikTok accounts with our multi-account functionality!
-
 ## 🛠 Dependencies
 
 This library requires the following dependencies:
