@@ -56,6 +56,9 @@ This document provides detailed information about the parameters and usage of th
 
 - **`copyrightcheck`** (bool, optional, default: `False`)
   - If set to `True`, the function will conduct a copyright check on TikTok before uploading. If the check fails, the code execution will stop.
+  
+- **`stealth`** (bool, optional, default: `False`)
+  - If set to `True`, the function will wait a couple of seconds between each operation to make it harder for TikTok to detect automation use.
 
 - **`suppressprint`** (bool, optional, default: `False`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
@@ -109,12 +112,12 @@ This document provides detailed information about the parameters and usage of th
 ## 🕰️ Runtime:
 **Total runtime mostly depends on your WIFI connection, however, here are approximations on how much runtime is added by each parameter**
 
-- **Captcha's:** 3 - 10 secs (in RARE cases, it may take longer)
-- **Adding Sound:** 3 - 5 secs
-- **Scheduling:** 2 - 5 secs
-- **Copyright Check:** 2 - 5 secs
+- **Captcha's:** 3 - 10 secs
+- **Adding Sound:** 3 - 5 secs (```stealth=True``` adds around 8 seconds)
+- **Scheduling:** 2 - 3 secs (```stealth=True``` adds around 6 seconds)
+- **Copyright Check:** 2 - 5 secs (```stealth=True``` adds around 2 seconds)
 
-- All in all, runtime won't exceed 30 seconds in most cases.
+- All in all, runtime won't exceed 20 seconds in most cases (unless ```stealth=True```).
 
 - **NOTE:** When running for the FIRST TIME ONLY, it may take an extra 20 - 30 seconds at the beginning for the code to start running as JS libraries are being built
 
