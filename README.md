@@ -20,6 +20,7 @@
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
 - **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library.
 - **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
+- **🤖 Upload with Telegram**: Code can be integrated with Telegram Bot (More info in /TelegramAutomation)
 
 ⭐️ If you like this project please feel free to star it, Thank you.
 
