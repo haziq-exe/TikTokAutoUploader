@@ -1,0 +1,13 @@
+{
+  "name": "tiktokautouploader-assets",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.48.2",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}
+
