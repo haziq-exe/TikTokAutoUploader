@@ -75,12 +75,12 @@ def install_js_dependencies():
             print("An error occurred during npm installation.")
             print(f"Error details: {e}")
 
-        print("Trying to install JavaScript dependencies with shell...")
-        try:
-            subprocess.run(['npm', 'install', '--silent'], cwd=js_dir, check=True, shell=True)
-        except Exception as e:
-            print("An error occurred during shell npm installation.")
-            print(f"Error details: {e}")
+            print("Trying to install JavaScript dependencies with shell...")
+            try:
+                subprocess.run(['npm', 'install', '--silent'], cwd=js_dir, check=True, shell=True)
+            except Exception as e:
+                print("An error occurred during shell npm installation.")
+                print(f"Error details: {e}")
     else:
         time.sleep(0.1)
 
@@ -291,15 +291,16 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     video (str) -> path to video to upload
     description (str) -> description for video
     accountname (str) -> account to upload on
-    hashtags (str)(array) -> hashtags for video
-    sound_name (str) -> name of tik tok sound to use for video
-    sound_aud_vol (str) -> volume of tik tok sound, 'main', 'mix' or 'background', check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
-    schedule (str) -> format HH:MM, your local time to upload video
-    day (int) -> day to schedule video for, check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
-    copyrightcheck (bool) -> include copyright check or not; CODE FAILS IF FAIL COPYRIGHT CHECK
-    suppressprint (bool) -> True means function doesnt print anything to provide updates on progress
-    headless (bool) -> run in headless mode or not
-    stealth (bool) -> will wait second(s) before each operation
+    hashtags (str)(array)(opt) -> hashtags for video
+    sound_name (str)(opt) -> name of tik tok sound to use for video
+    sound_aud_vol (str)(opt) -> volume of tik tok sound, 'main', 'mix' or 'background', check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
+    schedule (str)(opt) -> format HH:MM, your local time to upload video
+    day (int)(opt) -> day to schedule video for, check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
+    copyrightcheck (bool)(opt) -> include copyright check or not; CODE FAILS IF FAIL COPYRIGHT CHECK
+    suppressprint (bool)(opt) -> True means function doesnt print anything to provide updates on progress
+    headless (bool)(opt) -> run in headless mode or not
+    stealth (bool)(opt) -> will wait second(s) before each operation
+    proxy (dict)(opt) -> proxy server to run code on, check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
     --------------------------------------------------------------------------------------------------------------------------------------------
     """
     try:
@@ -521,8 +522,9 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         except:
                             if suppressprint == False:
                                 print(f"Tik tok hashtag not working for {hashtag}, moving onto next")
-                            for _ in range(len(hashtag)):
-                                page.keyboard.press("Backspace")
+                            page.keyboard.type(f"{hashtag[-1]} ")
+                            # for _ in range(len(hashtag)):
+                            #     page.keyboard.press("Backspace")
         
         if suppressprint == False:
             print("Description and Hashtags added")

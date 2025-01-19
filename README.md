@@ -18,6 +18,7 @@
 - **🗓 Schedule Uploads:** Upload videos at specific times or upto 10 days in advance with our scheduling feature.
 - **🔍 Copyright Check:** Ensure your video is safe from copyright claims before uploading.
 - **🏷 Add Working Hashtags:** Increase your reach by adding effective hashtags that actually work.
+- **🥷 Upload with Proxy Servers**: Stay hidden and upload through proxy servers no matter where you are in the world
 - **⏰ Cutdown on upload time:** Upload to TikTok with way less hassle and much more speed using our library.
 - **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
 - **🤖 Upload with Telegram**: Code can be integrated with Telegram Bot (More info in /TelegramAutomation)

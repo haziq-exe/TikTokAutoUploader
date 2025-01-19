@@ -35,11 +35,11 @@ async function checkForRedirect(page) {
         headless: false,
     };
 
-    if (proxy) {
+    if (proxy && proxy.server) {
         browserOptions.proxy = {
             server: proxy.server,
-            username: proxy.username,
-            password: proxy.password,
+            username: proxy.username || undefined,
+            password: proxy.password || undefined,
         }
     }
     let redirected = false;

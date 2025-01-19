@@ -66,6 +66,12 @@ This document provides detailed information about the parameters and usage of th
 - **`headless`** (int, optional, default: True)
   - Runs the code in headless mode, when set to `False` you can see the code execute in the browser, recommended to set this to `False` if code is not working as intended in order to more clearly see what the issue exactly is
 
+- **`proxy`** (dict, optional, default: None)
+  - Allows user to run the code on a proxy server
+  - Must be a dictionary with "server" key that has a string of proxy server IP address
+  - Optionally can also include "username" and "password" keys for authentication
+  - feature was contributed by KryvMykyta
+
 
 ## 🛠️ Initialization Info
 
