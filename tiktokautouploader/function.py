@@ -39,6 +39,9 @@ def check_expiry(accountname):
     for cookie in cookies:
         if cookie['name'] in ['sessionid', 'sid_tt', 'sessionid_ss', 'passport_auth_status']:
             expiry = cookie.get('expires')
+            # for manually extracted cookies
+            if not expiry:
+                expiry = cookie.get('expirationDate')
             cookies_expire.append(expiry < current_time)
 
     if all(cookies_expire):
@@ -46,9 +49,18 @@ def check_expiry(accountname):
 
     return expired
 
-def run_javascript():
+def run_javascript(proxy_data=None):
+    env_vars = {"PROXY": str(proxy_data) if proxy_data is not None else ""}
     js_file_path = pkg_resources.resource_filename(__name__, 'Js_assets/login.js')
-    result = subprocess.run(['node', js_file_path], capture_output=True, text=True)
+    proxy_argument = str(proxy_data) if proxy_data is not None else str({})
+    try:
+        result = subprocess.run(
+            ['node', js_file_path, '--proxy', proxy_argument],
+            capture_output=True,
+            text=True,
+        )
+    except Exception as e:
+        sys.exit(f"Error while running the JavaScript file, when trying to parse cookies: {e}")
     return result
 
 def install_js_dependencies():
@@ -59,8 +71,15 @@ def install_js_dependencies():
         print("JavaScript dependencies not found. Installing...")
         try:
             subprocess.run(['npm', 'install', '--silent'], cwd=js_dir, check=True)
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             print("An error occurred during npm installation.")
+            print(f"Error details: {e}")
+
+        print("Trying to install JavaScript dependencies with shell...")
+        try:
+            subprocess.run(['npm', 'install', '--silent'], cwd=js_dir, check=True, shell=True)
+        except Exception as e:
+            print("An error occurred during shell npm installation.")
             print(f"Error details: {e}")
     else:
         time.sleep(0.1)
@@ -234,9 +253,37 @@ def click_on_objects(page, object_coords):
         page.mouse.click(x, y)
         time.sleep(0.5)
 
+def validate_proxy(proxy):
+    if not proxy:
+        return
+
+    if not isinstance(proxy, dict):
+        raise ValueError("Proxy must be a dictionary.")
+
+    if "server" not in proxy or not isinstance(proxy["server"], str):
+        raise ValueError("Proxy must contain a 'server' key with a string value.")
+
+    try:
+        proxies = {
+            "http": f'http://{proxy["server"]}/',
+            "http": f'https://{proxy["server"]}/',
+        }
+        if proxy.get("username"):
+            proxies = {
+                "http": f'http://{proxy.get("username")}:{proxy.get("password")}@{proxy["server"]}/',
+                "http": f'https://{proxy.get("username")}:{proxy.get("password")}@{proxy["server"]}/',
+            }
+
+        response = requests.get("https://www.google.com", proxies=proxies)
+        if response.status_code == 200:
+            print("Proxy is valid!")
+        else:
+            raise ValueError(f"Proxy test failed with status code: {response.status_code}")
+    except Exception as e:
+        raise ValueError(f"Invalid proxy configuration when trying to simple request: {e}")
 
 
-def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False, headless=True, stealth=False):
+def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False, headless=True, stealth=False, proxy=None):
 
     """
     UPLOADS VIDEO TO TIKTOK
@@ -260,6 +307,11 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     except:
         time.sleep(0.1)
 
+    try:
+        validate_proxy(proxy)
+    except Exception as e:
+        sys.exit(f'Error validating proxy: {e}')
+
     retries = 0
     cookie_read = False
     oldQ = 'N.A'
@@ -278,7 +330,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     if cookie_read == False:
         install_js_dependencies()
         login_warning(accountname=accountname)
-        result = run_javascript()
+        result = run_javascript(proxy_data=proxy)
         os.rename('TK_cookies.json', f'TK_cookies_{accountname}.json')
 
         cookies, cookie_read = read_cookies(f"TK_cookies_{accountname}.json")
@@ -288,7 +340,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
  
     with sync_playwright() as p:
         
-        browser = p.firefox.launch(headless=headless)
+        browser = p.firefox.launch(headless=headless, proxy=proxy)
         context = browser.new_context()
         context.add_cookies(cookies)
         page = context.new_page()
@@ -694,7 +746,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             time.sleep(0.5)
             page.close()
 
-            browser = p.chromium.launch(headless=headless)
+            browser = p.chromium.launch(headless=headless, proxy=proxy)
 
             context = browser.new_context()
             context.add_cookies(cookies)
