@@ -704,7 +704,16 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                 if schedule == None:
                     if stealth == True:
                         time.sleep(1)
-                    page.click('button:has-text("Post")', timeout=10000)
+                    try:
+                        page.click('button:has-text("Post")[data-e2e="post_video_button"]', timeout=2000)
+                        page.wait_for_url(url='https://www.tiktok.com/tiktokstudio/content', timeout=2000)
+                    except:
+                        page.click('button:has-text("Post")[aria-disabled="false"]', timeout=2000)
+                        try:
+                            page.wait_for_url(url='https://www.tiktok.com/tiktokstudio/content', timeout=2000)
+                        except:
+                            print("POSSIBLE ERROR: Cannot confirm if uploaded successfully, Please check account in a minute or two to confirm")
+                            return "Error"
                     uploaded = False
                     checks = 0
                     while uploaded == False:
@@ -872,7 +881,16 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                 if schedule == None:
                     if stealth == True:
                         time.sleep(1)
-                    page.click('button:has-text("Post")', timeout=10000)
+                    try:
+                        page.click('button:has-text("Post")[data-e2e="post_video_button"]', timeout=2000)
+                        page.wait_for_url(url='https://www.tiktok.com/tiktokstudio/content', timeout=2000)
+                    except:
+                        page.click('button:has-text("Post")[aria-disabled="false"]', timeout=2000)
+                        try:
+                            page.wait_for_url(url='https://www.tiktok.com/tiktokstudio/content', timeout=2000)
+                        except:
+                            print("POSSIBLE ERROR: Cannot confirm if uploaded successfully, Please check account in a minute or two to confirm")
+                            return "Error"
                     uploaded = False
                     checks = 0
                     while uploaded == False:
