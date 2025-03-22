@@ -113,7 +113,7 @@ This document provides detailed information about the parameters and usage of th
 
 - As far as I'm aware these captchas are the only types of captchas that you may encounter when trying to upload TikTok's, if you do encounter a different captcha, feel free to email me and let me know and I will try to increase the capabilities of this project to include those captcha's as well.
 
-- To check what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
+- To see what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
 ## 🕰️ Runtime:
 **Total runtime mostly depends on your WIFI connection, however, here are approximations on how much runtime is added by each parameter**
