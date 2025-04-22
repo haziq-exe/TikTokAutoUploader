@@ -23,7 +23,7 @@
 - **📝 Upload to different accounts:** Stay organized and on top of multiple different accounts with our multi-account functionality.
 - **🤖 Upload with Telegram**: Code can be integrated with Telegram Bot (More info in /TelegramAutomation)
 
-⭐️ If you like this project please feel free to star it, Thank you.
+⭐️ If you like this project please feel free to star it.
 
 ## 📦 Installation
 
