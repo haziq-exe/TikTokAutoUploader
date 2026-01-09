@@ -164,6 +164,7 @@ def download_image(image_url):
 def run_inference_on_image_tougher(image_path, object):
 
     #rk <- Roboflow key
+    rk = 'kyHFbAWkOWfGz8fSEw8O'
     
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -196,6 +197,7 @@ def run_inference_on_image_tougher(image_path, object):
 def run_inference_on_image(image_path):
 
     #rk <- Roboflow key
+    rk = 'kyHFbAWkOWfGz8fSEw8O'
 
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -482,6 +484,10 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             page.set_input_files('input[type="file"][accept="video/*"]', f'{video}')
         except:
             sys.exit("ERROR: FAILED TO INPUT FILE. Possible Issues: Wifi too slow, file directory wrong, or check documentation to see if captcha is solvable")
+        # --- FIX START: CLEAR TUTORIAL POP-UP ---
+        if page.locator("div.tutorial-tooltip__footer > button[data-type='primary']").is_visible():
+            page.click("div.tutorial-tooltip__footer > button[data-type='primary']")
+        # --- FIX END ---
         page.wait_for_selector('div[data-contents="true"]')
         page.click('div[data-contents="true"]')
         if suppressprint == False:
@@ -528,7 +534,12 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
         
         if suppressprint == False:
             print("Description and Hashtags added")
-
+        # --- FIX START: DISMISS CONTENT CHECK OVERLAY ---
+        # Using your logic with a slight optimization for 'has_text'
+        content_check_btn = page.locator("div.common-modal-footer > button[data-type='neutral']", has_text="Cancel")
+        if content_check_btn.is_visible():
+            content_check_btn.click()
+        # --- FIX END ---
         try:
             page.wait_for_selector('button:has-text("Post")[aria-disabled="false"]', timeout=12000000)
         except:
