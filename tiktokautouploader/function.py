@@ -802,13 +802,15 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         time.sleep(1)
                 page.locator('div[data-e2e="copyright_container"] span[data-part="thumb"]').click()
                 while copyrightcheck == True:
-                    time.sleep(0.2)
-                    if page.locator("span" ,has_text="No issues detected.").is_visible():
+                    time.sleep(2)
+                    '''
+                    if page.locator("span" ,has_text="We'll check").is_visible():
                         if suppressprint == False:
                             print("Copyright check complete")
                         break
-                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                    if page.locator("span", has_text="Copyright issues detected").is_visible():
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
+                    '''
             
 
             try:
@@ -969,7 +971,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                     if page.locator('span', has_text="Copyright issues detected.").is_visible():
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
             
-            '''
+            
             try:
                 if schedule == None:
                     if stealth == True:
@@ -1016,6 +1018,6 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             time.sleep(1)
 
             page.close()
-            '''
+            
     
     return "Completed"
