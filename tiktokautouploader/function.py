@@ -626,9 +626,6 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
 
         page.keyboard.type(description)
 
-        for _ in range(3):
-            page.keyboard.press("Enter")
-
         if hashtags != None:
             for hashtag in hashtags:
                 if hashtag[0] != '#':
@@ -768,19 +765,10 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                     sliders = page.locator("input.scaleInput")
 
                     if sound_aud_vol == 'background':
-                        slider1 = sliders.nth(0)
-                        bounding_box1 = slider1.bounding_box()
-                        if bounding_box1:
-                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
-                            y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x1, y1)
-                    
                         slider2 = sliders.nth(1)
                         bounding_box2 = slider2.bounding_box()
                         if bounding_box2:
-                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
+                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.07)
                             y2 = bounding_box2["y"] + bounding_box2["height"] / 2
                             if stealth == True:
                                 time.sleep(1)
@@ -790,19 +778,12 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         slider1 = sliders.nth(0)
                         bounding_box1 = slider1.bounding_box()
                         if bounding_box1:
-                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
+                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.07)
                             y1 = bounding_box1["y"] + bounding_box1["height"] / 2
                             if stealth == True:
                                 time.sleep(1)
                             page.mouse.click(x1, y1)
-                        slider2 = sliders.nth(1)
-                        bounding_box2 = slider2.bounding_box()
-                        if bounding_box2:
-                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
-                            y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x2, y2)   
+                    time.sleep(1)
                 except:
                     sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
 
@@ -942,19 +923,10 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         sliders = page.locator("input.scaleInput")
 
                         if sound_aud_vol == 'background':
-                            slider1 = sliders.nth(0)
-                            bounding_box1 = slider1.bounding_box()
-                            if bounding_box1:
-                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
-                                y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                                if stealth == True:
-                                    time.sleep(1)
-                                page.mouse.click(x1, y1)
-                        
                             slider2 = sliders.nth(1)
                             bounding_box2 = slider2.bounding_box()
                             if bounding_box2:
-                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
+                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.07)
                                 y2 = bounding_box2["y"] + bounding_box2["height"] / 2
                                 if stealth == True:
                                     time.sleep(1)
@@ -964,19 +936,13 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             slider1 = sliders.nth(0)
                             bounding_box1 = slider1.bounding_box()
                             if bounding_box1:
-                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
+                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.07)
                                 y1 = bounding_box1["y"] + bounding_box1["height"] / 2
                                 if stealth == True:
                                     time.sleep(1)
                                 page.mouse.click(x1, y1)
-                            slider2 = sliders.nth(1)
-                            bounding_box2 = slider2.bounding_box()
-                            if bounding_box2:
-                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
-                                y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                                if stealth == True:
-                                    time.sleep(1)
-                                page.mouse.click(x2, y2)   
+                        time.sleep(1)
+
                     except:
                         sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
 
