@@ -114,7 +114,7 @@ upload_tiktok(
 
 ---
 
-## 🔧 Full Parameter Reference
+## Full Parameter Reference
 
 | Parameter | Type | Description |
 |---|---|---|
@@ -135,7 +135,7 @@ upload_tiktok(
 
 ---
 
-## 🛠 Dependencies
+## Dependencies
 
 `playwright`, `requests`, `Pillow`, `inference` — all installed automatically with the package.
 
