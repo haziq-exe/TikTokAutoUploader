@@ -4,7 +4,11 @@
 
 ### AUTOMATE TIKTOK UPLOADS. USE TRENDING/FAVORITED SOUNDS, ADD WORKING HASHTAGS, SCHEDULE UPLOADS, AUTOSOLVES CAPTCHAS, AND MORE
 
-[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/) WORKING AS OF FEB 2026 (sound_aud_vol issues only, use default ```sound_aud_vol='mix'```)
+[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)
+
+<div align="center">
+WORKING AS OF FEB 2026 (sound_aud_vol issues only, use default ```sound_aud_vol='mix'```)
+</div>
 
 <p align="center">
   <img src="READMEimage/READMEGIF.gif" alt="" width="900"/>
