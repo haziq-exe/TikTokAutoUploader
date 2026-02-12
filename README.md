@@ -3,7 +3,6 @@
 </div>
 
 ### AUTOMATE TIKTOK UPLOADS. USE TRENDING/FAVORITED SOUNDS, ADD WORKING HASHTAGS, SCHEDULE UPLOADS, AUTOSOLVES CAPTCHAS, AND MORE
-## [UPDATED FEB 2026]
 
 [![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)
 
@@ -12,6 +11,8 @@
 <p align="center">
   <img src="READMEimage/READMEGIF.gif" alt="" width="900"/>
 </p>
+
+### Working as of Feb 2026
 
 ## Features
 
