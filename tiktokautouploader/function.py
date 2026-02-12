@@ -164,6 +164,7 @@ def download_image(image_url):
 def run_inference_on_image_tougher(image_path, object):
 
     #rk <- Roboflow key
+    rk = 'kyHFbAWkOWfGz8fSEw8O'
     
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -196,6 +197,7 @@ def run_inference_on_image_tougher(image_path, object):
 def run_inference_on_image(image_path):
 
     #rk <- Roboflow key
+    rk = 'kyHFbAWkOWfGz8fSEw8O'
 
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -282,8 +284,127 @@ def validate_proxy(proxy):
     except Exception as e:
         raise ValueError(f"Invalid proxy configuration when trying to simple request: {e}")
 
+def select_sound_from_favorites(page, sound_name, stealth=False, suppressprint=False):
+    """
+    Selects a sound from the favorites tab by searching through the list.
+    Returns True if sound was found and selected, False otherwise.
+    """
+    try:
+        # Navigate to favorites tab
+        if stealth == True:
+            time.sleep(1)
+        # Click on the favorites tab - using the id or text
+        try:
+            page.click('button:has-text("Favorites")')
+            
+        except:
+            try:
+                page.click('button#favourite')
+            except:
+                page.click('div.TUXTabBar-item#favourite button')
+        
+        # Wait for content to load
+        time.sleep(1)
+        if stealth == True:
+            time.sleep(1)
+        
+        # Wait for music cards to appear
+        page.wait_for_selector('div[class*="MusicPanelMusicItem__content"]', timeout=50000)
+        time.sleep(2.5)
+        
+        # Get all music card containers
+        music_cards = page.locator('div[class*="MusicPanelMusicItem__content"]')
+        card_count = music_cards.count()
+        
+        if suppressprint == False:
+            print(f"Found {card_count} favorite sounds, searching for '{sound_name}'...")
+        
+        # Split sound_name into keywords (by spaces)
+        keywords = sound_name.split()
+        keywords_lower = [kw.lower() for kw in keywords if kw.strip()]
+        
+        if suppressprint == False and len(keywords_lower) > 1:
+            print(f"Searching for sounds containing all keywords: {keywords_lower}")
+        
+        # Search through each card to find a match
+        found = False
+        for i in range(card_count):
+            try:
+                # Get both title and other text from this card
+                card = music_cards.nth(i)
+                title_element = card.locator('div[class*="MusicPanelMusicItem__infoBasicTitle"]')
+                title_text = title_element.inner_text() if title_element.count() > 0 else ""
+                other_element = card.locator('div[class*="MusicPanelMusicItem__infoBasicDesc"]')
+                other_text = other_element.inner_text() if other_element.count() > 0 else ""
+                
+                
+                # Combine title and other text for searching
+                combined_text = f"{title_text} {other_text}".strip().lower()
+                
+                # Check if ALL keywords are present in the combined text
+                all_keywords_match = True
+                for keyword in keywords_lower:
+                    if keyword not in combined_text:
+                        all_keywords_match = False
+                        break
+                
+                if all_keywords_match and combined_text:
+                    # Found a match - hover and click
+                    display_title = title_text if title_text else "Unknown"
+                    if suppressprint == False:
+                        print(f"Found matching sound: '{display_title} {other_text}'")
+                    
+                    if stealth == True:
+                        time.sleep(0.5)
+                    
+                    # Hover over the card
+                    card.hover()
+                    time.sleep(0.3)
+                    
+                    # Click the card
+                    card.click()
+                    
+                    # Wait for and click "Use" button
+                    card.locator("button").last.click()
+                    if stealth == True:
+                        time.sleep(1)    
+                    
+                    found = True
+                    break
+            except Exception as e:
+                # Continue to next card if this one fails
+                continue
+        
+        return found
+        
+    except Exception as e:
+        if suppressprint == False:
+            print(f"Error in favorites search: {e}")
+        return False
 
-def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False, headless=True, stealth=False, proxy=None):
+def select_sound_from_search(page, sound_name, stealth=False):
+    """
+    Selects a sound using the search functionality (original behavior).
+    """
+    page.get_by_placeholder("Search sounds").click()
+    page.keyboard.type(sound_name)
+    time.sleep(0.2)
+    if stealth == True:
+        time.sleep(2)
+    page.keyboard.press("Enter")
+    try:
+        page.wait_for_selector("div[class*='MusicPanelMusicItem__operation']")
+        if stealth == True:
+            time.sleep(0.5)
+        page.locator("div[class*='MusicPanelMusicItem__operation']").first.click()
+        if stealth == True:
+            time.sleep(1)
+        return True
+    except:
+        return False
+
+
+def upload_tiktok(video, description, accountname, hashtags=None, sound_name=None, sound_aud_vol='mix', schedule=None, day=None, copyrightcheck=False, suppressprint=False, headless=True, stealth=False, proxy=None, search_mode='search'):
 
     """
     UPLOADS VIDEO TO TIKTOK
@@ -301,6 +422,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
     headless (bool)(opt) -> run in headless mode or not
     stealth (bool)(opt) -> will wait second(s) before each operation
     proxy (dict)(opt) -> proxy server to run code on, check documentation for more info -> https://github.com/haziq-exe/TikTokAutoUploader
+    search_mode (str)(opt) -> 'search' or 'favorites', determines how to find the sound. Default is 'search'
     --------------------------------------------------------------------------------------------------------------------------------------------
     """
     try:
@@ -482,7 +604,17 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             page.set_input_files('input[type="file"][accept="video/*"]', f'{video}')
         except:
             sys.exit("ERROR: FAILED TO INPUT FILE. Possible Issues: Wifi too slow, file directory wrong, or check documentation to see if captcha is solvable")
+        # --- FIX END ---
         page.wait_for_selector('div[data-contents="true"]')
+
+
+        time.sleep(0.5)
+        if page.locator("button:has-text('Cancel')").is_visible():
+            print("Tutorial pop-up detected, dismissing...")
+            page.click("button:has-text('Cancel')")
+        if page.locator("button:has-text('Got it')").is_visible():
+            page.click("button:has-text('Got it')")
+
         page.click('div[data-contents="true"]')
         if suppressprint == False:
             print("Entered File, waiting for tiktok to load onto their server, this may take a couple of minutes, depending on your video length")
@@ -497,9 +629,6 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
         time.sleep(0.5)
 
         page.keyboard.type(description)
-
-        for _ in range(3):
-            page.keyboard.press("Enter")
 
         if hashtags != None:
             for hashtag in hashtags:
@@ -528,7 +657,12 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
         
         if suppressprint == False:
             print("Description and Hashtags added")
-
+        # --- FIX START: DISMISS CONTENT CHECK OVERLAY ---
+        # Using your logic with a slight optimization for 'has_text'
+        content_check_btn = page.locator("div.common-modal-footer > button[data-type='neutral']", has_text="Cancel")
+        if content_check_btn.is_visible():
+            content_check_btn.click()
+        # --- FIX END ---
         try:
             page.wait_for_selector('button:has-text("Post")[aria-disabled="false"]', timeout=12000000)
         except:
@@ -608,78 +742,61 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             try:
                 if stealth == True:
                         time.sleep(2)
-                page.click("div.TUXButton-label:has-text('Edit video')")
+                page.locator("button:has-text('Sounds')").last.click()
             except:
                 sound_fail = True
             if sound_fail == False:
-                page.wait_for_selector("input.search-bar-input")
-                page.fill(f"input.search-bar-input", f"{sound_name}")
-                time.sleep(0.2)
-                if stealth == True:
-                        time.sleep(2)
-                page.click("div.TUXButton-label:has-text('Search')")
-                try:
-                    page.wait_for_selector('div.music-card-container')
-                    if stealth == True:
-                        time.sleep(0.5)
-                    page.click("div.music-card-container")
-                    page.wait_for_selector("div.TUXButton-label:has-text('Use')")
-                    if stealth == True:
-                        time.sleep(1)
-                    page.click("div.TUXButton-label:has-text('Use')")
-                except:
+                # Wait for the sounds container to load
+                # page.wait_for_selector("div[data-e2e='editor_music_container']", timeout=10000)
+                time.sleep(1.5)
+                
+                # Select sound based on search_mode
+                sound_found = False
+                if search_mode == 'favorites':
+                    sound_found = select_sound_from_favorites(page, sound_name, stealth=stealth, suppressprint=suppressprint)
+                else:
+                    # Default to search mode
+                    sound_found = select_sound_from_search(page, sound_name, stealth=stealth)
+                
+                if not sound_found:
                     sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
-                try:
-                    page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
-                    if stealth == True:
+                
+                if sound_aud_vol != 'mix':
+                    try:
+                        page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                        if stealth == True:
+                            time.sleep(1)
+                        page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
+                        time.sleep(0.5)
+                        sliders = page.locator("input.scaleInput")
+
+                        if sound_aud_vol == 'background':
+                            slider2 = sliders.nth(1)
+                            bounding_box2 = slider2.bounding_box()
+                            if bounding_box2:
+                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.07)
+                                y2 = bounding_box2["y"] + bounding_box2["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
+                                page.mouse.click(x2, y2)
+
+                        if sound_aud_vol == 'main':
+                            slider1 = sliders.nth(0)
+                            bounding_box1 = slider1.bounding_box()
+                            if bounding_box1:
+                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.07)
+                                y1 = bounding_box1["y"] + bounding_box1["height"] / 2
+                                if stealth == True:
+                                    time.sleep(1)
+                                page.mouse.click(x1, y1)
                         time.sleep(1)
-                    page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
-                    time.sleep(0.5)
-                    sliders = page.locator("input.scaleInput")
+                    except:
+                        sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again or use the default 'mix'.")
 
-                    if sound_aud_vol == 'background':
-                        slider1 = sliders.nth(0)
-                        bounding_box1 = slider1.bounding_box()
-                        if bounding_box1:
-                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
-                            y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x1, y1)
-                    
-                        slider2 = sliders.nth(1)
-                        bounding_box2 = slider2.bounding_box()
-                        if bounding_box2:
-                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
-                            y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x2, y2)
-
-                    if sound_aud_vol == 'main':
-                        slider1 = sliders.nth(0)
-                        bounding_box1 = slider1.bounding_box()
-                        if bounding_box1:
-                            x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
-                            y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x1, y1)
-                        slider2 = sliders.nth(1)
-                        bounding_box2 = slider2.bounding_box()
-                        if bounding_box2:
-                            x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
-                            y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                            if stealth == True:
-                                time.sleep(1)
-                            page.mouse.click(x2, y2)   
-                except:
-                    sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
-
-                page.wait_for_selector("div.TUXButton-label:has-text('Save edit')")
+                page.wait_for_selector("button:has-text('Save')")
                 if stealth == True:
                         time.sleep(1)
-                page.click("div.TUXButton-label:has-text('Save edit')")
+                page.locator("button:has-text('Save')").first.click()
                 if suppressprint == False:
                     print("Added sound")
         
@@ -687,18 +804,24 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             page.wait_for_selector('div[data-contents="true"]')
 
             if copyrightcheck == True:
+                copy_check_counter = 0
                 if stealth == True:
                         time.sleep(1)
                 page.locator('div[data-e2e="copyright_container"] span[data-part="thumb"]').click()
                 while copyrightcheck == True:
-                    time.sleep(0.2)
-                    if page.locator("span" ,has_text="No issues detected.").is_visible():
+                    time.sleep(2)
+                    if page.get_by_text("No issues found.", exact=True).is_visible():
                         if suppressprint == False:
                             print("Copyright check complete")
                         break
-                    if page.locator("span", has_text="Copyright issues detected.").is_visible():
+                    if page.locator("span:has-text('Copyright issues detected')").is_visible():
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
-            
+                    
+                    copy_check_counter += 1
+                    if copy_check_counter > 10:
+                        print("COPYRIGHT CHECK TIMEOUT: UNABLE TO CONFIRM IF VIDEO PASSED COPYRIGHT CHECK, CONTINUING TO UPLOAD IN 5 SECONDS.")
+                        break
+                    
 
             try:
                 if schedule == None:
@@ -789,22 +912,19 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                     if stealth == True:
                         time.sleep(1)
                     page.click("div.TUXButton-label:has-text('Edit video')")
-                    page.wait_for_selector("input.search-bar-input")
-                    page.fill(f"input.search-bar-input", f"{sound_name}")
-                    time.sleep(0.2)
-                    if stealth == True:
-                        time.sleep(1)
-                    page.click("div.TUXButton-label:has-text('Search')")
-                    try:
-                        page.wait_for_selector('div.music-card-container')
-                        if stealth == True:
-                            time.sleep(1)
-                        page.click("div.music-card-container")
-                        page.wait_for_selector("div.TUXButton-label:has-text('Use')")
-                        if stealth == True:
-                            time.sleep(1)
-                        page.click("div.TUXButton-label:has-text('Use')")
-                    except:
+                    # Wait for the sounds container to load
+                    page.wait_for_selector("div[data-e2e='editor_music_container']", timeout=10000)
+                    time.sleep(0.5)
+                    
+                    # Select sound based on search_mode
+                    sound_found = False
+                    if search_mode == 'favorites':
+                        sound_found = select_sound_from_favorites(page, sound_name, stealth=stealth, suppressprint=suppressprint)
+                    else:
+                        # Default to search mode
+                        sound_found = select_sound_from_search(page, sound_name, stealth=stealth)
+                    
+                    if not sound_found:
                         sys.exit(f"ERROR: SOUND '{sound_name}' NOT FOUND")
                     try:
                         page.wait_for_selector('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMSAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgNy41MDE2QzAgNi42NzMxNyAwLjY3MTU3MyA2LjAwMTYgMS41IDYuMDAxNkgzLjU3NzA5QzMuODY4MDUgNi4wMDE2IDQuMTQ0NTggNS44NzQ4OCA0LjMzNDU1IDUuNjU0NDlMOC43NDI1NSAwLjU0MDUyQzkuMzQ3OCAtMC4xNjE2NjggMTAuNSAwLjI2NjM3NCAxMC41IDEuMTkzNDFWMTguOTY3MkMxMC41IDE5Ljg3NDUgOS4zODg5NCAyMC4zMTI5IDguNzY5NDIgMTkuNjVMNC4zMzE3OSAxNC45MDIxQzQuMTQyNjkgMTQuNjk5OCAzLjg3ODE2IDE0LjU4NDkgMy42MDEyMiAxNC41ODQ5SDEuNUMwLjY3MTU3MyAxNC41ODQ5IDAgMTMuOTEzNCAwIDEzLjA4NDlWNy41MDE2Wk01Ljg0OTQ1IDYuOTYwMjdDNS4yNzk1NiA3LjYyMTQzIDQuNDQ5OTcgOC4wMDE2IDMuNTc3MDkgOC4wMDE2SDJWMTIuNTg0OUgzLjYwMTIyQzQuNDMyMDMgMTIuNTg0OSA1LjIyNTY0IDEyLjkyOTUgNS43OTI5NSAxMy41MzY0TDguNSAxNi40MzI4VjMuODg1MjJMNS44NDk0NSA2Ljk2MDI3WiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPHBhdGggZD0iTTEzLjUxNSA3LjE5MTE5QzEzLjM0MjQgNi45NzU1OSAxMy4zMzk5IDYuNjYwNTYgMTMuNTM1MiA2LjQ2NTNMMTQuMjQyMyA1Ljc1ODE5QzE0LjQzNzYgNS41NjI5MyAxNC43NTU4IDUuNTYxNzUgMTQuOTM1NiA1Ljc3MTM2QzE2Ljk5NTkgOC4xNzM2MiAxNi45OTU5IDExLjgyOCAxNC45MzU2IDE0LjIzMDNDMTQuNzU1OCAxNC40Mzk5IDE0LjQzNzYgMTQuNDM4NyAxNC4yNDIzIDE0LjI0MzVMMTMuNTM1MiAxMy41MzY0QzEzLjMzOTkgMTMuMzQxMSAxMy4zNDI0IDEzLjAyNjEgMTMuNTE1IDEyLjgxMDVDMTQuODEzIDExLjE4ODUgMTQuODEzIDguODEzMTIgMTMuNTE1IDcuMTkxMTlaIiBmaWxsPSIjMTYxODIzIiBmaWxsLW9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMTYuNzE3MiAxNi43MTgzQzE2LjUyMTkgMTYuNTIzMSAxNi41MjMxIDE2LjIwNzQgMTYuNzA3MiAxNi4wMDE3QzE5LjcyNTcgMTIuNjMgMTkuNzI1NyA3LjM3MTY4IDE2LjcwNzIgNC4wMDAwMUMxNi41MjMxIDMuNzk0MjcgMTYuNTIxOSAzLjQ3ODU4IDE2LjcxNzIgMy4yODMzMkwxNy40MjQzIDIuNTc2MjFDMTcuNjE5NSAyLjM4MDk1IDE3LjkzNyAyLjM4MDIgMTguMTIzMyAyLjU4NDA4QzIxLjkwOTkgNi43MjkyNiAyMS45MDk5IDEzLjI3MjQgMTguMTIzMyAxNy40MTc2QzE3LjkzNyAxNy42MjE1IDE3LjYxOTUgMTcuNjIwNyAxNy40MjQzIDE3LjQyNTVMMTYuNzE3MiAxNi43MTgzWiIgZmlsbD0iIzE2MTgyMyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KPC9zdmc+Cg=="]')
@@ -815,19 +935,10 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                         sliders = page.locator("input.scaleInput")
 
                         if sound_aud_vol == 'background':
-                            slider1 = sliders.nth(0)
-                            bounding_box1 = slider1.bounding_box()
-                            if bounding_box1:
-                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.92)
-                                y1 = bounding_box1["y"] + bounding_box1["height"] / 2
-                                if stealth == True:
-                                    time.sleep(1)
-                                page.mouse.click(x1, y1)
-                        
                             slider2 = sliders.nth(1)
                             bounding_box2 = slider2.bounding_box()
                             if bounding_box2:
-                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.097)
+                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.07)
                                 y2 = bounding_box2["y"] + bounding_box2["height"] / 2
                                 if stealth == True:
                                     time.sleep(1)
@@ -837,19 +948,13 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                             slider1 = sliders.nth(0)
                             bounding_box1 = slider1.bounding_box()
                             if bounding_box1:
-                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.092)
+                                x1 = bounding_box1["x"] + (bounding_box1["width"] * 0.07)
                                 y1 = bounding_box1["y"] + bounding_box1["height"] / 2
                                 if stealth == True:
                                     time.sleep(1)
                                 page.mouse.click(x1, y1)
-                            slider2 = sliders.nth(1)
-                            bounding_box2 = slider2.bounding_box()
-                            if bounding_box2:
-                                x2 = bounding_box2["x"] + (bounding_box2["width"] * 0.92)
-                                y2 = bounding_box2["y"] + bounding_box2["height"] / 2
-                                if stealth == True:
-                                    time.sleep(1)
-                                page.mouse.click(x2, y2)   
+                        time.sleep(1)
+
                     except:
                         sys.exit("ERROR ADJUSTING SOUND VOLUME: please try again.")
 
@@ -876,7 +981,7 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
                     if page.locator('span', has_text="Copyright issues detected.").is_visible():
                         sys.exit("COPYRIGHT CHECK FAILED: VIDEO SAVED AS DRAFT, COPYRIGHT AUDIO DETECTED FROM TIKTOK")
             
-
+            
             try:
                 if schedule == None:
                     if stealth == True:
@@ -923,5 +1028,6 @@ def upload_tiktok(video, description, accountname, hashtags=None, sound_name=Non
             time.sleep(1)
 
             page.close()
+            
     
     return "Completed"

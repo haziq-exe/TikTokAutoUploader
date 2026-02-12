@@ -78,6 +78,26 @@ upload_tiktok(video=video_path, description=description, accountname=accountname
 upload_tiktok(video=video_path, description=description, accountname=accountname, sound_name='trending_sound', sound_aud_vol='main')
 ```
 
+### Upload with TikTok Sound (Favorites)
+
+```python
+from tiktokautouploader import upload_tiktok
+
+upload_tiktok(
+    video='lav.mp4',
+    description='Check out my cool AI video!',
+    accountname= 'aminjfarsangi',
+    sound_name='drake',
+    sound_aud_vol='mix',
+    copyrightcheck=True,
+    suppressprint=False,
+    stealth=True,
+    headless=False,
+    search_mode='favorites'
+)
+# search_mode can be either favorites or search
+```
+
 PLEASE READ DOCUMENTATION FOR MORE INFO.
 
 ### Schedule an Upload
