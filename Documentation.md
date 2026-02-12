@@ -2,7 +2,7 @@
 
 This document provides detailed information about the parameters and usage of the `upload_tiktok` function in the **tiktokautouploader** library. The function is designed to automate the process of uploading or scheduling videos to TikTok with additional features such as adding TikTok sounds, hashtags, and conducting copyright checks.
 
-### ❗ Key Sections:
+### Key Sections:
 
 - **Parameter Explanations**: Provides detailed descriptions of each parameter, including the valid options and their effects.
 - **Initialization Info**: Details instances that occur during first run of function
@@ -11,7 +11,7 @@ This document provides detailed information about the parameters and usage of th
 - **Runtime**: Provides an estimate of how much runtime is added by different parameters
 - **Example Usage**: Demonstrates a practical example of how to use the function.
 
-## 📜 Function: `upload_tiktok`
+## Function: `upload_tiktok`
 
 ### Parameters
 
@@ -63,7 +63,7 @@ This document provides detailed information about the parameters and usage of th
 - **`suppressprint`** (bool, optional, default: `False`)
   - Suppresses print messages that indicate the progress of the video upload. It is recommended to set this to `False` when first running the code to see progress and ensure everything works correctly.
 
-- **`headless`** (int, optional, default: True)
+- **`headless`** (bool, optional, default: True)
   - Runs the code in headless mode, when set to `False` you can see the code execute in the browser, recommended to set this to `False` if code is not working as intended in order to more clearly see what the issue exactly is
 
 - **`proxy`** (dict, optional, default: None)
@@ -72,8 +72,15 @@ This document provides detailed information about the parameters and usage of th
   - Optionally can also include "username" and "password" keys for authentication
   - feature was contributed by KryvMykyta
 
+- **`search_mode`** (str, optional, default: `'search'`)
+  - Determines how the function looks up the sound specified in `sound_name`. Accepts one of the following options:
+    - `'search'`: Searches TikTok for the sound by name. This is the default behaviour.
+    - `'favorites'`: Looks for the sound in your TikTok account's saved favorites instead of searching.
+      
+  - NOTE: `sound_name` must be provided for this parameter to have any effect. If using `'favorites'`, make sure the sound is actually saved to your account beforehand.
 
-## 🛠️ Initialization Info
+
+## Initialization Info
 
 - **During FIRST RUN:**
 
@@ -86,7 +93,7 @@ This document provides detailed information about the parameters and usage of th
   - You will be asked to log-in to TikTok, your cookies from your log-in will then be stored in a file called `TK_cookies_(youraccountname).json`. You will not need to log-in to that account again after that.
 
 
-## 📝 Important Notes
+## Important Notes
 
 **VERY IMPORTANT: Use this tool at your own risk, as automated uploading may violate TikTok's Terms of Service** 
 
@@ -97,7 +104,7 @@ This document provides detailed information about the parameters and usage of th
   - The function allows scheduling up to 240 hours (10 days) in advance.
   - If you need to schedule a video for the next month, the video can only be uploaded within the first 2 days of that month (as long as these days are also within 10 days from the current date).
 
-## ⛔ Supported Captchas:
+## Supported Captchas:
 
 ### Captcha solver currently supports Captchas of type:
 <p align="center">
@@ -115,7 +122,7 @@ This document provides detailed information about the parameters and usage of th
 
 - To see what captcha shows up when you upload on your account just open this link while logged in to TikTok: https://www.tiktok.com/tiktokstudio/upload?from=upload&lang=en
 
-## 🕰️ Runtime:
+## Runtime:
 **Total runtime mostly depends on your WIFI connection, however, here are approximations on how much runtime is added by each parameter**
 
 - **Captcha's:** 3 - 10 secs
@@ -130,7 +137,7 @@ This document provides detailed information about the parameters and usage of th
 
 ## Example Usage
 
-Here’s a basic example of how to use the `upload_tiktok` function:
+Here's a basic example of how to use the `upload_tiktok` function:
 
 ```python
 from tiktokautouploader import upload_tiktok
