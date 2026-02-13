@@ -4,15 +4,11 @@
 
 ### AUTOMATE TIKTOK UPLOADS. USE TRENDING/FAVORITED SOUNDS, ADD WORKING HASHTAGS, SCHEDULE UPLOADS, AUTOSOLVES CAPTCHAS, AND MORE
 
-[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/)
-
-<br>
+[![PyPI version](https://img.shields.io/pypi/v/tiktokautouploader.svg)](https://pypi.org/project/tiktokautouploader/) WORKING AS OF FEB 2026 (sound_aud_vol issues only, use default ```sound_aud_vol='mix'```)
 
 <p align="center">
   <img src="READMEimage/READMEGIF.gif" alt="" width="900"/>
 </p>
-
-### Working as of Feb 2026
 
 ## Features
 
@@ -24,6 +20,13 @@
 - **Proxy Support:** Route your uploads through a proxy server of your choice.
 - **Multiple Accounts:** Handle as many TikTok accounts as you need without losing track of any of them.
 - **Telegram Integration:** Hook the uploader up to a Telegram bot. Check `/TelegramAutomation` for setup details.
+- **Phantomwright Stealth Engine:** Bot detection evasion baked in at the browser level — fingerprint spoofing, human-like interactions, and hardened browser flags out of the box.
+
+---
+
+## Bot Detection Evasion with Phantomwright
+
+This library uses [**Phantomwright**](https://pypi.org/project/phantomwright/) as its browser engine instead of plain Playwright. Phantomwright is a patched, drop-in Playwright replacement specifically designed to evade bot detection.
 
 ---
 
@@ -44,7 +47,7 @@ pip install tiktokautouploader
 **Browser binaries** also need to be installed once (run after installing library):
 
 ```bash
-python -m playwright install
+phantomwright_driver install chromium
 ```
 
 ---
@@ -106,7 +109,7 @@ upload_tiktok(
     description=description,
     accountname=accountname,
     headless=True,       # no browser window
-    stealth=True,        # human-like delays between actions
+    stealth=True,        # additional human-like delays on top of baseline evasion
     suppressprint=True,  # no console output
     proxy={              # optional proxy config — see docs for format
         'server': 'http://yourproxy:port',
@@ -133,7 +136,7 @@ upload_tiktok(
 | `copyrightcheck` | `bool` *(opt)* | Run a copyright check before uploading |
 | `suppressprint` | `bool` *(opt)* | Silence all progress output from the function |
 | `headless` | `bool` *(opt)* | Run without a visible browser window |
-| `stealth` | `bool` *(opt)* | Add delays between operations to mimic human behaviour |
+| `stealth` | `bool` *(opt)* | Add extra delays between operations on top of the always-on Phantomwright evasion |
 | `proxy` | `dict` *(opt)* | Proxy server config — see docs for the expected format |
 | `search_mode` | `str` *(opt)* | How to find the sound: `'search'` (default) or `'favorites'` |
 
@@ -141,6 +144,6 @@ upload_tiktok(
 
 ## Dependencies
 
-`playwright`, `requests`, `Pillow`, `inference` — all installed automatically with the package.
+`phantomwright`, `requests`, `Pillow`, `inference` — all installed automatically with the package.
 
 ---
