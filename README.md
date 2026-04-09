@@ -92,6 +92,37 @@ upload_tiktok(video=video_path, description=description, accountname=accountname
               schedule='03:10', day=11)
 ```
 
+### Set a Custom Cover Image
+
+TikTok's "Upload cover" tab accepts an image but silently discards it server-side — the video always ends up with a random auto-selected frame as the cover regardless of what you upload there. The only reliable approach is TikTok's native cover editor, which lets you pick any frame from the video.
+
+The strategy: bake your desired cover image as the **last frame** of the MP4 at encode time, then pass `cover_image=` to `upload_tiktok()`. After the video uploads, the function opens the cover editor and drags the frame slider to the last frame before posting.
+
+**Step 1 — append your cover image as the last segment of the video:**
+
+```bash
+# Encode the static image as a short clip
+ffmpeg -loop 1 -i cover.png -t 2.5 -vf "scale=1080:1920,setsar=1" \
+  -c:v libx264 -pix_fmt yuv420p cover_clip.mp4
+
+# Concatenate it onto the end of your main video (concat demuxer)
+printf "file 'main.mp4'\nfile 'cover_clip.mp4'" > concat.txt
+ffmpeg -f concat -safe 0 -i concat.txt -c copy final.mp4
+```
+
+**Step 2 — pass `cover_image=` when uploading:**
+
+```python
+upload_tiktok(
+    video='final.mp4',        # last frame = your cover image
+    description='My caption',
+    accountname='myaccount',
+    cover_image='cover.png',  # triggers frame slider selection
+)
+```
+
+`cover_image` defaults to `None` — fully backward compatible. If the cover editor can't be found or the drag fails for any reason, the upload proceeds normally without a custom cover.
+
 ### Copyright Check Before Uploading
 
 ```python
@@ -128,6 +159,7 @@ upload_tiktok(
 | `video` | `str` | Path to the video file |
 | `description` | `str` | Caption for the video |
 | `accountname` | `str` | Which account to upload on |
+| `cover_image` | `str` *(opt)* | Path to a PNG/JPG to use as the cover. Must already be baked into the last frame of the video — see above. |
 | `hashtags` | `list` *(opt)* | List of hashtags to include |
 | `sound_name` | `str` *(opt)* | Name of the TikTok sound to use |
 | `sound_aud_vol` | `str` *(opt)* | Audio balance: `'main'`, `'mix'`, or `'background'` |

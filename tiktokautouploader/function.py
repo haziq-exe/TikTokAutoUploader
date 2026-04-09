@@ -1001,10 +1001,98 @@ def _submit_upload(page, schedule, stealth, suppressprint, post_success_wait, sc
     return None
 
 
+def _select_cover_last_frame(page) -> bool:
+    """
+    Open TikTok Studio's cover editor and drag the frame slider to the last frame.
+
+    The caller must ensure the desired cover image is already the last frame
+    of the MP4 (baked in at encode time).
+
+    Returns True on success, False on failure (upload proceeds without custom cover).
+    """
+    # Step 1: Open the cover editor modal
+    try:
+        edit_btn = page.locator('[data-e2e="cover_container"] div.edit-container')
+        if not edit_btn.is_visible(timeout=5000):
+            edit_btn = page.locator('div.edit-container:has-text("Edit cover")')
+            if not edit_btn.is_visible(timeout=3000):
+                return False
+        edit_btn.click()
+    except Exception:
+        return False
+
+    # Step 2: Wait for the frame slider
+    try:
+        page.wait_for_selector('div.drag-item', timeout=8000)
+        time.sleep(1)
+    except Exception:
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+        return False
+
+    # Step 3: Drag the slider to the far right (last frame)
+    try:
+        drag_item = page.locator('div.drag-item')
+        container = drag_item.locator('..')
+        container_box = container.bounding_box()
+        drag_box = drag_item.bounding_box()
+
+        if not container_box or not drag_box:
+            return False
+
+        target_x = container_box['x'] + container_box['width'] - 4
+        current_x = drag_box['x'] + drag_box['width'] / 2
+        current_y = drag_box['y'] + drag_box['height'] / 2
+
+        page.mouse.move(current_x, current_y)
+        page.mouse.down()
+        # Move in steps — TikTok ignores instant jumps
+        for i in range(1, 11):
+            page.mouse.move(current_x + (target_x - current_x) * i / 10, current_y)
+            time.sleep(0.05)
+        page.mouse.up()
+        time.sleep(1)
+    except Exception:
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+        return False
+
+    # Step 4: Confirm
+    try:
+        confirm_btn = page.locator('button:has-text("Confirm")').first
+        confirm_btn.scroll_into_view_if_needed()
+        time.sleep(0.3)
+        try:
+            confirm_btn.click(timeout=5000)
+        except Exception:
+            confirm_btn.evaluate("el => el.click()")
+        time.sleep(1.5)
+
+        # Wait for modal to close
+        try:
+            page.wait_for_selector('div.drag-item', state="hidden", timeout=5000)
+        except Exception:
+            pass
+
+        return True
+    except Exception:
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+        return False
+
+
 def upload_tiktok(
     video: str,
     description: str,
     accountname: str,
+    *,
+    cover_image=None,
     hashtags=None,
     sound_name=None,
     sound_aud_vol: str = "mix",
@@ -1023,6 +1111,15 @@ def upload_tiktok(
     video (str) -> path to video to upload
     description (str) -> description for video
     accountname (str) -> account to upload on
+    cover_image (str or Path, optional) ->
+        Path to a PNG/JPG to use as the video cover. The image must already be
+        baked into the last frame of the video (see notes below). When provided,
+        the upload flow will open TikTok's cover editor and drag the frame slider
+        to the last frame before posting.
+
+        Note: TikTok's "Upload cover" tab silently discards uploaded images
+        server-side. This parameter instead uses the native cover editor to select
+        the last frame of the video, which reliably sticks.
     hashtags (str)(array)(opt) -> hashtags for video
     sound_name (str)(opt) -> name of tik tok sound to use for video
     sound_aud_vol (str)(opt) -> volume of tik tok sound, 'main', 'mix' or 'background'
@@ -1096,6 +1193,10 @@ def upload_tiktok(
 
             if copyrightcheck:
                 _run_upload_copyright_check(page, stealth, suppressprint)
+
+            if cover_image:
+                _select_cover_last_frame(page)
+                time.sleep(0.5)
 
             result = _submit_upload(
                 page,
