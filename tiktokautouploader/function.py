@@ -950,10 +950,33 @@ def _submit_upload(page, schedule, stealth, suppressprint, post_success_wait, sc
             if stealth:
                 time.sleep(1)
             try:
+                # 1. Le bot clique sur le bouton "Publier" classique
                 page.click('button:has-text("Post")[data-e2e="post_video_button"]', timeout=2000)
+                
+                # --- LE CORRECTIF EST ICI ---
+                try:
+                    # 2. Si la pop-up "Continue to post?" apparaît, il clique sur "Post now"
+                    page.locator('button:has-text("Post now")').click(timeout=3000)
+                except Exception:
+                    pass # S'il n'y a pas de pop-up, il continue tranquillement
+                # ----------------------------
+
                 page.wait_for_url(url=CONTENT_URL, timeout=2000)
+                
             except Exception:
-                page.click('button:has-text("Post")[aria-disabled="false"]', timeout=2000)
+                # Sécurisation du deuxième clic (fallback)
+                try:
+                    page.click('button:has-text("Post")[aria-disabled="false"]', timeout=2000)
+                except Exception:
+                    pass
+                
+                # --- LE CORRECTIF (2ème vérification au cas où) ---
+                try:
+                    page.locator('button:has-text("Post now")').click(timeout=3000)
+                except Exception:
+                    pass
+                # --------------------------------------------------
+
                 try:
                     page.wait_for_url(url=CONTENT_URL, timeout=2000)
                 except Exception:
@@ -975,7 +998,16 @@ def _submit_upload(page, schedule, stealth, suppressprint, post_success_wait, sc
         else:
             if stealth:
                 time.sleep(1)
+            
+            # Clic pour valider la programmation
             page.click('button:has-text("Schedule")', timeout=10000)
+
+            # --- LE CORRECTIF POUR LE SCHEDULE EST ICI ---
+            try:
+                page.locator('button:has-text("Post now")').click(timeout=3000)
+            except Exception:
+                pass
+            # ---------------------------------------------
 
             uploaded = False
             checks = 0
