@@ -1119,6 +1119,69 @@ def _select_cover_last_frame(page) -> bool:
         return False
 
 
+def _set_visibility(page, visibility: str, suppressprint: bool = False) -> bool:
+    """
+    Sets the "Who can watch" visibility on TikTok Studio upload page.
+    Must be called after _wait_for_upload_ready(), before _submit_upload().
+
+    visibility (str) -> 'everyone' | 'friends' | 'private'
+    Returns True if successfully set, False otherwise (non-blocking).
+    """
+    label_map = {
+        "everyone": "Everyone",
+        "friends": "Friends",
+        "private": "Only me",
+    }
+    target_label = label_map.get(visibility.lower(), "Everyone")
+
+    try:
+        # TikTok Studio: click the current visibility selector to open dropdown
+        open_selectors = [
+            'div[data-e2e="permission-container"]',
+            'div[class*="PermissionSetting"]',
+            'div[class*="permission-item"]:visible',
+            f'div:has-text("Everyone"):visible',
+        ]
+        for sel in open_selectors:
+            try:
+                el = page.locator(sel).first
+                if el.count() > 0 and el.is_visible():
+                    el.click()
+                    time.sleep(0.4)
+                    break
+            except Exception:
+                continue
+
+        # Click the target option
+        option_selectors = [
+            f'div[data-e2e="permission-item"]:has-text("{target_label}")',
+            f'li:has-text("{target_label}")',
+            f'span:has-text("{target_label}")',
+            f'div[role="option"]:has-text("{target_label}")',
+            f'[aria-label="{target_label}"]',
+        ]
+        for sel in option_selectors:
+            try:
+                el = page.locator(sel).first
+                if el.count() > 0:
+                    el.click()
+                    time.sleep(0.3)
+                    if not suppressprint:
+                        print(f"Visibility set to '{target_label}'")
+                    return True
+            except Exception:
+                continue
+
+        if not suppressprint:
+            print(f"Could not set visibility to '{target_label}' — proceeding with default")
+        return False
+
+    except Exception as e:
+        if not suppressprint:
+            print(f"Visibility error: {e}")
+        return False
+
+
 def upload_tiktok(
     video: str,
     description: str,
@@ -1136,6 +1199,7 @@ def upload_tiktok(
     stealth: bool = False,
     proxy=None,
     search_mode: str = "search",
+    visibility: str = "everyone",
 ) -> str:
     """
     UPLOADS VIDEO TO TIKTOK (powered by Phantomwright for bot-detection evasion)
@@ -1163,6 +1227,7 @@ def upload_tiktok(
     stealth (bool)(opt) -> will wait second(s) before each operation
     proxy (dict)(opt) -> proxy server to run code on
     search_mode (str)(opt) -> 'search' or 'favorites'
+    visibility (str)(opt) -> 'everyone' (default), 'friends', or 'private' ('Only me')
     """
     try:
         check_for_updates()
@@ -1203,6 +1268,9 @@ def upload_tiktok(
         time.sleep(0.2)
         if not suppressprint:
             print("Tik tok done loading file onto servers")
+
+        if visibility and visibility.lower() != "everyone":
+            _set_visibility(page, visibility, suppressprint)
 
         sim.simulate_browsing(duration_ms=1000)
 
